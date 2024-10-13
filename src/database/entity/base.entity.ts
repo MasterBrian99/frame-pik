@@ -2,12 +2,12 @@ import { STATUS } from 'src/utils/constant';
 import {
   Column,
   CreateDateColumn,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 export class BaseEntity {
-  @PrimaryColumn({ name: 'id' })
+  @PrimaryGeneratedColumn()
   id: string;
 
   @CreateDateColumn({ name: 'created_at' })
