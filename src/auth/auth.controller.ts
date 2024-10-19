@@ -50,7 +50,6 @@ export class AuthController {
   })
   @Post()
   async register(@Body() body: CreateAuthDto) {
-    this.logger.log(body);
     try {
       const data = await this.authService.register(body);
       return new StandardResponse(
@@ -80,7 +79,7 @@ export class AuthController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  @Auth([RoleType.ADMIN], {
+  @Auth([RoleType.ADMIN, RoleType.USER], {
     public: false,
   })
 

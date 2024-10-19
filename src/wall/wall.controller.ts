@@ -1,42 +1,50 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { WallService } from './wall.service';
 import { CreateWallDto } from './dto/create-wall.dto';
-import { UpdateWallDto } from './dto/update-wall.dto';
+import {
+  ApiTags,
+  ApiInternalServerErrorResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { StandardResponse } from 'src/common/standard-response';
+import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
+import { Auth } from 'src/decorators/http.decorators';
+import { RoleType } from 'src/utils/role-type';
 
 @Controller('wall')
+@ApiTags('wall')
+@ApiInternalServerErrorResponse({
+  description: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+})
 export class WallController {
   constructor(private readonly wallService: WallService) {}
 
+  @Auth([RoleType.ADMIN, RoleType.USER], {
+    public: false,
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBody({ type: CreateWallDto })
+  @ApiOperation({
+    summary: 'create new wall',
+    description: 'creating a new with details',
+  })
+  @ApiCreatedResponse({
+    description: 'Return `Success`',
+  })
   @Post()
-  create(@Body() createWallDto: CreateWallDto) {
-    return this.wallService.create(createWallDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.wallService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wallService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWallDto: UpdateWallDto) {
-    return this.wallService.update(+id, updateWallDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wallService.remove(+id);
+  async create(@Body() createWallDto: CreateWallDto) {
+    try {
+      const data = await this.wallService.create(createWallDto);
+      return new StandardResponse(
+        HttpStatus.CREATED,
+        SUCCESS_MESSAGES.WALL_CREATED,
+        data,
+      );
+    } catch (e) {
+      throw e;
+    }
   }
 }

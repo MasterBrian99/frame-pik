@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { COLLABORATOR_ROLE } from 'src/utils/constant';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { CreateWallDto } from './dto/create-wall.dto';
-import { UpdateWallDto } from './dto/update-wall.dto';
+import { WallEntity } from 'src/database/entity/wall.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { Transactional } from 'typeorm-transactional';
+import { WallCollaboratorEntity } from 'src/database/entity/wall-collaborator.entity';
+import { ContextProvider } from 'src/providers/context.provider';
 
 @Injectable()
 export class WallService {
-  create(createWallDto: CreateWallDto) {
-    return 'This action adds a new wall';
-  }
+  private readonly logger = new Logger(WallService.name);
 
-  findAll() {
-    return `This action returns all wall`;
-  }
+  constructor(
+    @InjectRepository(WallEntity)
+    private readonly wallRepository: Repository<WallEntity>,
+    @InjectRepository(WallCollaboratorEntity)
+    private readonly wallCollaboratorRepository: Repository<WallCollaboratorEntity>,
+  ) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} wall`;
-  }
+  @Transactional()
+  async create(createWallDto: CreateWallDto) {
+    try {
+      const currentUser = ContextProvider.getAuthUser();
+      const wall = new WallEntity();
+      wall.name = createWallDto.name;
+      wall.description = createWallDto.description;
+      wall.isPublic = createWallDto.isPublic;
+      const savedWall = await this.wallRepository.save(wall);
 
-  update(id: number, updateWallDto: UpdateWallDto) {
-    return `This action updates a #${id} wall`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} wall`;
+      const wallCollaborator = new WallCollaboratorEntity();
+      wallCollaborator.wall = savedWall;
+      wallCollaborator.collaboratorRole = COLLABORATOR_ROLE.OWNER;
+      wallCollaborator.user = currentUser;
+      await this.wallCollaboratorRepository.save(wallCollaborator);
+      return;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

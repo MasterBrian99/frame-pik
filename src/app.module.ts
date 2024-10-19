@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { ClsModule } from 'nestjs-cls';
 import { SnapModule } from './snap/snap.module';
 import { WallModule } from './wall/wall.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -40,6 +42,13 @@ import { WallModule } from './wall/wall.module';
         synchronize: configService.get<number>('SYNC_MODE') == 1,
         logging: true,
       }),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     AuthModule,
     UserModule,

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsOptional } from 'class-validator';
 
 export class CreateAuthDto {
@@ -10,7 +10,7 @@ export class CreateAuthDto {
   email: string;
   @ApiProperty()
   password: string;
-  @ApiProperty({
+  @ApiPropertyOptional({
     examples: ['brian mc', 'pasindu pramodya'],
     description: 'name of the user.this is not required ',
   })
