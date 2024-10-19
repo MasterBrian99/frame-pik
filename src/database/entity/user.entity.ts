@@ -1,6 +1,7 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { RoleType } from 'src/utils/role-type';
+import { WallCollaboratorEntity } from './wall-collaborator.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
@@ -14,4 +15,7 @@ export class UserEntity extends BaseEntity {
 
   @Column({ type: 'enum', enum: RoleType, default: RoleType.USER })
   role!: RoleType;
+
+  @OneToMany(() => WallCollaboratorEntity, (w) => w.user)
+  wallCollaborator: WallCollaboratorEntity[];
 }

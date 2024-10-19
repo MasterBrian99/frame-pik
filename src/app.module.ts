@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ClsModule } from 'nestjs-cls';
+import { SnapModule } from './snap/snap.module';
+import { WallModule } from './wall/wall.module';
 
 @Module({
   imports: [
@@ -36,11 +38,13 @@ import { ClsModule } from 'nestjs-cls';
         database: configService.get<string>('DATABASE_NAME'),
         entities: [__dirname + '/database/entity/*.entity{.ts,.js}'],
         synchronize: configService.get<number>('SYNC_MODE') == 1,
-        logging: false,
+        logging: true,
       }),
     }),
     AuthModule,
     UserModule,
+    SnapModule,
+    WallModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,3 +3,8 @@ export enum STATUS {
   INACTIVE = 'INACTIVE',
   DELETED = 'DELETED',
 }
+
+export enum COLLABORATOR_ROLE {
+  OWNER = 'OWNER',
+  USER = 'USER',
+}
