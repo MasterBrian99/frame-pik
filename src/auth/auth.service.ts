@@ -30,6 +30,7 @@ export class AuthService {
       }
       const user = new UserEntity();
       user.email = createAuthDto.email;
+      user.name = createAuthDto.name;
       user.password = await this.passwordService.hashPassword(
         createAuthDto.password,
       );
