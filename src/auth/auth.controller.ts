@@ -5,8 +5,8 @@ import {
   HttpStatus,
   Logger,
   HttpCode,
-  Get, UseGuards
-} from "@nestjs/common";
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { StandardResponse } from 'src/common/standard-response';
@@ -16,15 +16,38 @@ import { Auth } from 'src/decorators/http.decorators';
 import { RoleType } from 'src/utils/role-type';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { UserEntity } from 'src/database/entity/user.entity';
-import { AuthGuard } from "../guards/auth.guard";
-import { RolesGuard } from "../guards/roles.guard";
+import {
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
 
 @Controller('auth')
+@ApiTags('auth')
+@ApiInternalServerErrorResponse({
+  description: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+})
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBody({ type: CreateAuthDto })
+  @ApiOperation({
+    summary: 'create new user',
+    description: 'creating a new with email and password',
+  })
+  @ApiCreatedResponse({
+    description: 'Return `Success`',
+  })
+  @ApiConflictResponse({
+    description: ERROR_MESSAGES.USER_ALREADY_EXIST,
+  })
   @Post()
   async register(@Body() body: CreateAuthDto) {
     this.logger.log(body);
