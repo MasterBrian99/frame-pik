@@ -6,13 +6,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { PasswordService } from './password.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/database/entity/user.entity';
 import { Repository } from 'typeorm';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
 import { LoginAuthDto } from './dto/login-auth.dto';
+import { RoleType } from 'src/utils/role-type';
+import { TokenPayloadDto } from './dto/token-payload.dto';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { TokenType } from 'src/utils/token-type';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +25,8 @@ export class AuthService {
     private readonly passwordService: PasswordService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
   async register(createAuthDto: CreateAuthDto) {
     const alreadyExist = await this.userRepository.findOne({
@@ -47,10 +53,20 @@ export class AuthService {
   }
   async userLogin(body: LoginAuthDto) {
     const user = await this.validateUser(body);
-    throw new Error('Method not implemented.');
+    return this.createAccessToken({ role: user.role, userId: user.id });
+    // throw new Error('Method not implemented.');
   }
 
-  async createAccessToken() {}
+  async createAccessToken(data: { role: RoleType; userId: number }) {
+    return new TokenPayloadDto({
+      expiresIn: this.configService.get<number>('JWT_EXPIRATION_TIME'),
+      accessToken: await this.jwtService.signAsync({
+        userId: data.userId,
+        type: TokenType.ACCESS_TOKEN,
+        role: data.role,
+      }),
+    });
+  }
   async validateUser(userLoginDto: LoginAuthDto): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -70,20 +86,10 @@ export class AuthService {
     }
     return user!;
   }
-
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async getCurrentUser(user: UserEntity) {
+    return {
+      email: user.email,
+      userId: user.id,
+    };
   }
 }

@@ -5,10 +5,18 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ClsModule } from 'nestjs-cls';
 
 @Module({
   imports: [
     DatabaseModule,
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [`.env`],
@@ -28,10 +36,11 @@ import { AuthModule } from './auth/auth.module';
         database: configService.get<string>('DATABASE_NAME'),
         entities: [__dirname + '/database/entity/*.entity{.ts,.js}'],
         synchronize: configService.get<number>('SYNC_MODE') == 1,
-        logging: true,
+        logging: false,
       }),
     }),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
