@@ -1,5 +1,6 @@
 import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { RoleType } from 'src/utils/role-type';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
@@ -10,4 +11,7 @@ export class UserEntity extends BaseEntity {
 
   @Column({ name: 'name', length: 255, nullable: false, type: 'varchar' })
   name: string;
+
+  @Column({ type: 'enum', enum: RoleType, default: RoleType.USER })
+  role!: RoleType;
 }
