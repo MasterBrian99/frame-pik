@@ -1,8 +1,15 @@
+import { BrowserRouter as Router } from 'react-router-dom'
+
+import { Routings } from './router/routings'
+import { ThemeProvider } from './providers/theme-provider'
+
 function App() {
   return (
-    <div className="relative overflow-hidden bg-white">
-      <h1 className="text-green-500">Hello</h1>
-    </div>
+    <Router>
+      <ThemeProvider>
+        <Routings />
+      </ThemeProvider>
+    </Router>
   )
 }
 
