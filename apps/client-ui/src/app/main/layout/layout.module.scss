@@ -1,0 +1,17 @@
+.customNavLink {
+  &_root {
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-xs);
+    font-weight: var(--mantine-h1-font-weight);
+    font-size: var(--mantine-font-size-xl);
+    color: var(--mantine-color-dark-4);
+
+    &:hover {
+      color: var(--mantine-color-dark-9);
+    }
+
+    &[data-active] {
+      color: var(--mantine-color-dark-9);
+      background-color: var(--mantine-color-gray-1);
+    }
+  }
+}
