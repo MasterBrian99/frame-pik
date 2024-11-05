@@ -1,79 +1,40 @@
-import classes from './profile-page.module.scss';
-import { GoPlus } from 'react-icons/go';
 import {
-  ActionIcon,
-  Box,
-  Card,
-  Flex,
-  Grid,
+  BackgroundImage,
+  Box, Grid,
   Group,
-  Image,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Tabs,
-  Text,
-  Title,
+  Image, Title
 } from '@mantine/core';
 
 const ProfilePage = () => {
   return (
     <Box>
-      <Flex direction="column" justify="center" align="center">
-        <Image src="/profile_temp.png" className={classes.profileImage} alt="profile" />
+      <Box mx="auto">
+        <BackgroundImage
+          style={{
+            height: 300,
+          }}
+          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png"
+          radius="xs"
+        >
+          <Group justify="end" align="end" w="100%" h="100%" pb="xs" pr="sm">
+            asdasdasd
+          </Group>
+        </BackgroundImage>
+      </Box>
+      <Grid>
+        <Grid.Col span={3}>
+          <Image
+            radius="md"
+            src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
+          />
+        </Grid.Col>
+        <Grid.Col span={6}>
         <Title order={2} c="dimmed" mt="md">
           Brian MC
         </Title>
         <Title order={6}>@brianmc</Title>
-      </Flex>
-      <Tabs radius="xl" variant="pills" defaultValue="first">
-        <Flex justify="center" my="lg">
-          <Tabs.List justify="center">
-            <Tabs.Tab value="first">Snaps</Tabs.Tab>
-            <Tabs.Tab value="second">Wall</Tabs.Tab>
-          </Tabs.List>
-        </Flex>
-
-        <Box my="xl">
-          <Tabs.Panel value="first">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum nulla iste, dolores esse
-            explicabo sed fuga provident molestias, voluptas totam id quod corporis magni similique
-            veritatis. Necessitatibus eaque adipisci totam! First panel
-          </Tabs.Panel>
-          <Tabs.Panel value="second">
-            <Group justify="end">
-              <ActionIcon size="xl" variant="transparent" aria-label="Settings">
-                <GoPlus style={{ width: '70%', height: '70%' }} stroke="1.5" />
-              </ActionIcon>
-            </Group>
-            <Box>
-              <Grid>
-                <Grid.Col span={3}>
-                  <Box>
-                    <Card shadow="sm" padding="lg" radius="lg" withBorder>
-                      <Card.Section p="xs">
-                        <SimpleGrid cols={{ base: 1, sm: 2 }}>
-                          <Skeleton animate radius="md" />
-                          <Stack>
-                            <Skeleton h={100} animate radius="md" />
-                            <Skeleton h={100} animate radius="md" />
-                          </Stack>
-                        </SimpleGrid>
-                      </Card.Section>
-                      <Box>
-                        <Title order={4}>Naasdddddd ddddddddddddddde</Title>
-                        <Text size="sm" c="dimmed">
-                          999 Snaps
-                        </Text>
-                      </Box>
-                    </Card>
-                  </Box>
-                </Grid.Col>
-              </Grid>
-            </Box>
-          </Tabs.Panel>
-        </Box>
-      </Tabs>
+        </Grid.Col>
+      </Grid>
     </Box>
   );
 };
