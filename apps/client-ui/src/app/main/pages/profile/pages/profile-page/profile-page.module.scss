@@ -1,5 +1,13 @@
-.profileImage {
-  border-radius: 100%;
-  width: 200px;
-  height: 200px;
+.profileImage{
+  width: 120px;
+  height: 120px;
+  border-radius: 80px;
+  object-fit: cover;
+ margin-bottom: -60px;
+
+}
+
+.coverImage{
+ border-radius: var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0;
+ height: 252px;
 }
