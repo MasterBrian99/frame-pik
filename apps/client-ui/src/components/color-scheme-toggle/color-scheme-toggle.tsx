@@ -12,7 +12,6 @@ export function ColorSchemeToggle() {
       size="xl"
       aria-label="Toggle color scheme"
       radius="xl"
-      mr="sm"
     >
       {colorScheme === 'dark' && <FaRegSun style={{ width: rem(20), height: rem(20) }} />}
       {colorScheme === 'light' && <FaMoon style={{ width: rem(20), height: rem(20) }} />}

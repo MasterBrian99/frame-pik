@@ -1,133 +1,119 @@
 import classes from './layout.module.scss';
-import { GoArrowRight, GoHomeFill } from 'react-icons/go';
-import { MdSearch, MdTimer } from 'react-icons/md';
-import { VscSettings } from 'react-icons/vsc';
-import { Outlet } from 'react-router-dom';
+import { MdHome, MdPhotoAlbum } from 'react-icons/md';
 import {
-  ActionIcon,
   AppShell,
-  Burger,
-  Flex,
+  Box,
+  Burger, Flex,
   Group,
   Image,
   NavLink,
-  rem,
   ScrollArea,
-  Skeleton,
-  TextInput,
-  useMantineColorScheme,
+  Skeleton, Text,
+  Title, useMantineColorScheme
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ColorSchemeToggle } from '@/components/color-scheme-toggle/color-scheme-toggle';
-import UserMenu from '@/components/user-menu/user-menu';
+import { Outlet } from 'react-router-dom';
 
-// import { MantineLogo } from '@mantinex/mantine-logo';
-const Layout = () => {
-  const [opened, { toggle }] = useDisclosure();
+export default function Layout() {
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const { colorScheme } = useMantineColorScheme();
 
   return (
     <AppShell
+  
       layout="alt"
-      header={{ height: 70 }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: 'sm',
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Grid w="100%">
-            <Grid.Col span={9}>
-              <TextInput placeholder="Search..." radius="md" />
-            </Grid.Col>
-            <Grid.Col span={3}>
-              <ActionIcon variant="light" aria-label="Settings">
-                <VscSettings style={{ width: '70%', height: '70%' }} stroke="1.5" />
-              </ActionIcon>
-              <ActionIcon variant="light" aria-label="Settings">
-                <VscSettings style={{ width: '70%', height: '70%' }} stroke="1.5" />
-              </ActionIcon>
-            </Grid.Col>
-          </Grid> */}
-          <Group h="100%" align="center" w="100%" justify="space-between">
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Flex align="center">
-              <TextInput
-                radius="xl"
-                size="lg"
-                placeholder="Search images...."
-                rightSectionWidth={42}
-                leftSection={<MdSearch style={{ width: rem(18), height: rem(18) }} stroke="1.5" />}
-                rightSection={
-                  <ActionIcon size={32} radius="xl" variant="filled">
-                    <GoArrowRight style={{ width: rem(18), height: rem(18) }} stroke="1.5" />
-                  </ActionIcon>
-                }
-              />
-            </Flex>
-            <Flex align="center">
-              <ColorSchemeToggle />
-              <ActionIcon size="xl" variant="light" aria-label="Settings" radius="xl">
-                <VscSettings style={{ width: '70%', height: '70%' }} stroke="1.5" />
-              </ActionIcon>
-            </Flex>
-          </Group>
-        </Group>
-      </AppShell.Header>
-      <AppShell.Navbar p="md">
-        <AppShell.Section>
-          <Flex>
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Group justify="center">
-              {/* <Text>Navbar</Text> */}
+        <Group h="100%" px="md" w="100%">
+          <Flex justify="space-between" align="center" w="100%">
+            <Flex justify="center" align="center">
+              <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+              <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
               <Group justify="center" align="center">
                 <Image
-                  w={200}
+                  w={120}
                   src={colorScheme === 'light' ? '/frame-pik-dark.png' : '/frame-pik-light.png'}
                 />
               </Group>
-            </Group>
+            </Flex>
+            <Box>
+              <ColorSchemeToggle />
+            </Box>
           </Flex>
+        </Group>
+      </AppShell.Header>
+      <AppShell.Navbar p="md"   className={classes.navbar}>
+        <AppShell.Section>
+          <Group>
+            <Group justify="center" align="center" w="100%">
+              <Image
+                className={classes.profileImage}
+                src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.the-sun.com%2Fwp-content%2Fuploads%2Fsites%2F6%2F2021%2F01%2FNA-Joe-biden-impeachment-comp-2.jpg&f=1&nofb=1"
+              />
+            </Group>
+            <Flex justify="center" direction="column" align="center" w="100%">
+              <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+              <Title order={3}>Brian MC</Title>
+              <Title order={6} c="dimmed">
+                @asd
+              </Title>
+            </Flex>
+          </Group>
         </AppShell.Section>
         <AppShell.Section grow my="md" component={ScrollArea}>
+          <Box mb="sm">
+            <NavLink
+              href="#required-for-focus"
+              label="Home"
+              variant="filled"
+              leftSection={<MdHome size="1.5rem" />}
+            />
+             <NavLink
+              href="#required-for-focus"
+              label="Ablums"
+              variant="filled"
+              leftSection={<MdPhotoAlbum size="1.5rem" />}
+            />
+
+          </Box>
+        <Box>
+        <Text size="sm" fw={500} c="dimmed">
+            Collections
+          </Text>
           <NavLink
-            classNames={{
-              root: classes.customNavLink_root,
-            }}
-            href="#required-for-focus"
-            label="Home"
-            leftSection={<GoHomeFill size="1.5rem" />}
-          />
-          <NavLink
-            classNames={{
-              root: classes.customNavLink_root,
-            }}
-            href="#required-for-focus"
-            label="Recent"
-            leftSection={<MdTimer size="1.5rem" />}
-            active
-          />
-          {Array(4)
+              href="#required-for-focus"
+              label="Home"
+              variant="filled"
+              leftSection={<MdHome size="1.5rem" />}
+            />
+             <NavLink
+              href="#required-for-focus"
+              label="Ablums"
+              variant="filled"
+              leftSection={<MdPhotoAlbum size="1.5rem" />}
+            />
+        </Box>
+
+          {Array(60)
             .fill(0)
             .map((_, index) => (
               <Skeleton key={index} h={28} mt="sm" animate={false} />
             ))}
         </AppShell.Section>
-        <AppShell.Section>
-          <UserMenu />
-        </AppShell.Section>
-
-        {/* {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))} */}
+        <AppShell.Section>Navbar footer – always at the bottom</AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
-        <Outlet />
+       <Outlet/>
       </AppShell.Main>
     </AppShell>
   );
-};
-
-export default Layout;
+}
