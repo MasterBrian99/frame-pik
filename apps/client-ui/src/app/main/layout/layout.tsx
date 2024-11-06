@@ -1,28 +1,37 @@
 import classes from './layout.module.scss';
+import { useQuery } from '@tanstack/react-query';
 import { MdHome, MdPhotoAlbum } from 'react-icons/md';
+import { Link, Outlet } from 'react-router-dom';
 import {
   AppShell,
   Box,
-  Burger, Flex,
+  Burger,
+  Flex,
   Group,
   Image,
   NavLink,
   ScrollArea,
-  Skeleton, Text,
-  Title, useMantineColorScheme
+  Skeleton,
+  Text,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { getCurrentUser } from '@/api/auth';
 import { ColorSchemeToggle } from '@/components/color-scheme-toggle/color-scheme-toggle';
-import { Outlet } from 'react-router-dom';
+import UserMenu from '@/components/user-menu/user-menu';
 
 export default function Layout() {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const { colorScheme } = useMantineColorScheme();
 
+  const userQuery = useQuery({
+    queryKey: ['me'],
+    queryFn: () => getCurrentUser(),
+  });
   return (
     <AppShell
-  
       layout="alt"
       header={{ height: 60 }}
       navbar={{
@@ -51,7 +60,7 @@ export default function Layout() {
           </Flex>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md"   className={classes.navbar}>
+      <AppShell.Navbar p="md" className={classes.navbar}>
         <AppShell.Section>
           <Group>
             <Group justify="center" align="center" w="100%">
@@ -62,46 +71,53 @@ export default function Layout() {
             </Group>
             <Flex justify="center" direction="column" align="center" w="100%">
               <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
-              <Title order={3}>Brian MC</Title>
-              <Title order={6} c="dimmed">
-                @asd
-              </Title>
+              {userQuery.isSuccess && userQuery.data && userQuery.data.data && (
+                <Title order={3}>{userQuery.data.data.name}</Title>
+              )}
+              {userQuery.isSuccess && userQuery.data && (
+                <Text size="xs" c="dimmed">
+                  {userQuery.data.data.email}
+                </Text>
+              )}
             </Flex>
           </Group>
         </AppShell.Section>
         <AppShell.Section grow my="md" component={ScrollArea}>
           <Box mb="sm">
             <NavLink
-              href="#required-for-focus"
+              component={Link}
+              to="/"
               label="Home"
               variant="filled"
               leftSection={<MdHome size="1.5rem" />}
             />
-             <NavLink
-              href="#required-for-focus"
-              label="Ablums"
+            <NavLink
+              component={Link}
+              to="/wall"
+              label="Wall"
               variant="filled"
               leftSection={<MdPhotoAlbum size="1.5rem" />}
             />
-
           </Box>
-        <Box>
-        <Text size="sm" fw={500} c="dimmed">
-            Collections
-          </Text>
-          <NavLink
-              href="#required-for-focus"
+          <Box>
+            <Text size="sm" fw={500} c="dimmed">
+              Collections
+            </Text>
+            <NavLink
+              component={Link}
+              to="/"
               label="Home"
               variant="filled"
               leftSection={<MdHome size="1.5rem" />}
             />
-             <NavLink
-              href="#required-for-focus"
-              label="Ablums"
+            <NavLink
+              component={Link}
+              to="/wall"
+              label="Wall"
               variant="filled"
               leftSection={<MdPhotoAlbum size="1.5rem" />}
             />
-        </Box>
+          </Box>
 
           {Array(60)
             .fill(0)
@@ -109,10 +125,12 @@ export default function Layout() {
               <Skeleton key={index} h={28} mt="sm" animate={false} />
             ))}
         </AppShell.Section>
-        <AppShell.Section>Navbar footer – always at the bottom</AppShell.Section>
+        <AppShell.Section>
+          <UserMenu />
+        </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
-       <Outlet/>
+        <Outlet />
       </AppShell.Main>
     </AppShell>
   );

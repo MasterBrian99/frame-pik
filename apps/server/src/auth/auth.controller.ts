@@ -21,10 +21,13 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { TokenPayloadDto } from './dto/token-payload.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -62,9 +65,24 @@ export class AuthController {
     }
   }
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginAuthDto })
+  @ApiOperation({
+    summary: 'login as a user',
+    description: 'login with email and password',
+  })
+  @ApiCreatedResponse({
+    description: 'Return `Success`',
+  })
+  @ApiNotFoundResponse({
+    description: ERROR_MESSAGES.USER_NOT_FOUND,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'current user info',
+    type: TokenPayloadDto,
+  })
   @Post('login')
   async userLogin(@Body() body: LoginAuthDto) {
-    this.logger.log(body);
     try {
       const data = await this.authService.userLogin(body);
       return new StandardResponse(
@@ -79,14 +97,25 @@ export class AuthController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'get current user details',
+  })
+  @ApiCreatedResponse({
+    description: 'Return `Success`',
+  })
+  @ApiNotFoundResponse({
+    description: ERROR_MESSAGES.USER_NOT_FOUND,
+  })
   @Auth([RoleType.ADMIN, RoleType.USER], {
     public: false,
   })
-
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'current user info',
+    type: null,
+  })
   // @ApiOkResponse({ type: UserDto, description: 'current user info' })
   async getCurrentUser(@AuthUser() user: UserEntity) {
-    // return user.toDto();
-
     try {
       const data = await this.authService.getCurrentUser(user);
       return new StandardResponse(

@@ -87,9 +87,18 @@ export class AuthService {
     return user!;
   }
   async getCurrentUser(user: UserEntity) {
+    const userEntity = await this.userRepository.findOne({
+      where: {
+        id: user.id,
+      },
+    });
+    if (!userEntity) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
     return {
-      email: user.email,
-      userId: user.id,
+      email: userEntity.email,
+      id: userEntity.id,
+      name: userEntity.name,
     };
   }
 }
