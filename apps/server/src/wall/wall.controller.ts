@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { WallService } from './wall.service';
 import { CreateWallDto } from './dto/create-wall.dto';
 import {
@@ -13,6 +21,7 @@ import { StandardResponse } from 'src/common/standard-response';
 import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
 import { Auth } from 'src/decorators/http.decorators';
 import { RoleType } from 'src/utils/role-type';
+import { WallPagination } from './dto/wall-pagination.dto';
 
 @Controller('wall')
 @ApiTags('wall')
@@ -42,6 +51,26 @@ export class WallController {
         HttpStatus.CREATED,
         SUCCESS_MESSAGES.WALL_CREATED,
         data,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'get all withdraw request with pagination current user',
+    description: 'get all withdraw for current user with pagination',
+  })
+  @Auth([RoleType.ADMIN, RoleType.USER], {
+    public: false,
+  })
+  @Get()
+  async findAllCurrentUser(@Query() pagination: WallPagination) {
+    try {
+      return new StandardResponse(
+        HttpStatus.OK,
+        SUCCESS_MESSAGES.SUCCESS,
+        await this.wallService.findAll(pagination),
       );
     } catch (e) {
       throw e;

@@ -132,11 +132,20 @@ const routesForNotAuthenticatedOnly: RouteObject[] = [];
 
 export function Router() {
   const { token } = useAuth();
-  const router = createBrowserRouter([
-    ...publicRoutes,
-    ...(!token ? routesForNotAuthenticatedOnly : []),
-    ...routesForAuthenticatedOnly,
-  ]);
+  const router = createBrowserRouter(
+    [
+      ...publicRoutes,
+      ...(!token ? routesForNotAuthenticatedOnly : []),
+      ...routesForAuthenticatedOnly,
+    ],
+    {
+      future: {
+        v7_relativeSplatPath: true,
+        v7_fetcherPersist: true,
+        v7_normalizeFormMethod: true,
+      },
+    }
+  );
 
   return <RouterProvider router={router} />;
 }

@@ -1,20 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import Joi from 'joi';
-import { MdOutlineClose, MdOutlineFileUpload, MdOutlinePhotoLibrary } from 'react-icons/md';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Grid,
-  Group,
-  Paper,
-  rem,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
-import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Box, Button, Checkbox, Grid, Paper, Textarea, TextInput } from '@mantine/core';
+import { FileWithPath } from '@mantine/dropzone';
 import { joiResolver, useForm } from '@mantine/form';
 import { createWall } from '@/api/wall';
 import customNotification from '@/shared/notifications';
@@ -92,8 +80,8 @@ const WallCreatePage = () => {
                 maxLength={255}
               />
             </Grid.Col>
-            <Grid.Col span={12}>
-              {/* <Text>Upload images</Text> */}
+            {/* <Grid.Col span={12}>
+              <Text>Upload images</Text>
               <Dropzone
                 onDrop={setFiles}
                 onReject={(files) => console.log('rejected files', files)}
@@ -142,7 +130,7 @@ const WallCreatePage = () => {
                   </div>
                 </Group>
               </Dropzone>
-            </Grid.Col>
+            </Grid.Col> */}
             <Grid.Col span={12}>
               <Button fullWidth mt="xl" size="md" type="submit">
                 Create

@@ -12,6 +12,7 @@ import { ERROR_MESSAGES } from 'src/utils/error-messages';
 import { Transactional } from 'typeorm-transactional';
 import { WallCollaboratorEntity } from 'src/database/entity/wall-collaborator.entity';
 import { ContextProvider } from 'src/providers/context.provider';
+import { WallPagination } from './dto/wall-pagination.dto';
 
 @Injectable()
 export class WallService {
@@ -45,6 +46,23 @@ export class WallService {
       throw new InternalServerErrorException(
         ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+  async findAll(pagination: WallPagination) {
+    const queryBuilder = this.wallRepository.createQueryBuilder('wall');
+    queryBuilder.leftJoinAndSelect('wall.collaborators', 'collaborators');
+    queryBuilder.where('collaborators.user = :userId', {
+      userId: pagination.userId,
+    });
+    if (pagination.status) {
+      queryBuilder.andWhere('wall.status = :status', {
+        status: pagination.status,
+      });
+    }
+    if (pagination.search) {
+      queryBuilder.andWhere('wall.name LIKE :search', {
+        search: `%${pagination.search}%`,
+      });
     }
   }
 }
