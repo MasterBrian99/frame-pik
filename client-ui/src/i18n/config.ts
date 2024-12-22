@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import resourcesToBackend from "i18next-resources-to-backend";
 
-export const LANGUAGES = ["en"];
+export const LANGUAGES = ["en", "si"];
 //Quilljou/vite-react-ts-tailwind-starter
 i18next
   .use(LanguageDetector)
@@ -16,8 +16,10 @@ i18next
     })
   )
   .init({
-    debug: true,
+    load: "languageOnly",
     fallbackLng: {
       default: ["en"],
+      "en-US": ["en"],
     },
+    debug: true,
   });
