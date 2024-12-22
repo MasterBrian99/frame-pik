@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -10,10 +11,25 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "bundler",
+=======
+    "types": ["node", "@testing-library/jest-dom", "vitest/globals"],
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+>>>>>>> origin/master
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+<<<<<<< HEAD
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
     "baseUrl": ".",
     "paths": {
@@ -22,4 +38,12 @@
   },
   "include": ["src"],
   "exclude": ["node_modules"]
+=======
+    "paths": {
+      "@/*": ["./src/*"],
+      "@test-utils": ["./test-utils"]
+    }
+  },
+  "include": ["src", "test-utils"]
+>>>>>>> origin/master
 }
