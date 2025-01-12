@@ -28,7 +28,10 @@ const Header = () => {
         <div className="items-center hidden w-full gap-6 px-12 text-sm font-medium md:flex">
           <div className="relative w-full">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <Input placeholder="Search..." className="w-full pl-8" />
+            <Input
+              placeholder="Search..."
+              className="w-full pl-8 rounded-full"
+            />
           </div>
         </div>
         <div className="flex items-center gap-4">

@@ -8,12 +8,12 @@ const MainLayout = () => {
   return (
     <div>
       <Header />
-      <div>
+      <div className="container mx-auto">
         <h1>hello</h1>
         <Button>asd</Button>
       </div>
       <p className="text-2xl">
-        {t("features")}Click on the Vite and React logos to learn more
+        {t("title")}Click on the Vite and React logos to learn more
       </p>
     </div>
   );

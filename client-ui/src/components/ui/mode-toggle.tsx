@@ -9,11 +9,21 @@ export function ModeToggle() {
   return (
     <>
       {theme === "light" ? (
-        <Button variant="outline" size="icon" onClick={() => setTheme("dark")}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setTheme("dark")}
+          className="rounded-full"
+        >
           <Moon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </Button>
       ) : (
-        <Button variant="outline" size="icon" onClick={() => setTheme("light")}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setTheme("light")}
+          className="rounded-full"
+        >
           <Sun className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </Button>
       )}
