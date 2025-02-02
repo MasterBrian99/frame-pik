@@ -3,8 +3,8 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { PasswordService } from './password.service';
-import { DatabaseModule } from 'src/database/database.module';
-import { UserModule } from 'src/user/user.module';
+import { DatabaseModule } from 'src/common/database/database.module';
+import { UserModule } from '../user/user.module';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
@@ -21,7 +21,7 @@ import { PublicStrategy } from './public.strategy';
         publicKey: configService.get<string>('PUBLIC_KEY'),
         signOptions: {
           algorithm: 'RS256',
-          expiresIn: configService.get<number>('JWT_EXPIRATION_TIME'),
+          expiresIn: configService.get<string>('JWT_EXPIRATION_TIME'),
         },
         verifyOptions: {
           algorithms: ['RS256'],

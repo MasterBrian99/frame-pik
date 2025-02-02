@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { UserService } from '../user/user.service';
-import { UserEntity } from 'src/database/entity/user.entity';
+import { UserEntity } from 'src/common/database/entity/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { RoleType, TokenType } from 'src/utils/constants';
 

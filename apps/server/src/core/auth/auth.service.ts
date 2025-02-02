@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { UserEntity } from 'src/database/entity/user.entity';
+import { UserEntity } from 'src/common/database/entity/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';

@@ -3,8 +3,6 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import * as dotenv from 'dotenv';
 import { UserEntity } from './entity/user.entity';
-import { addTransactionalDataSource } from 'typeorm-transactional';
-import { DataSource } from 'typeorm';
 
 dotenv.config({
   path: '.env',
@@ -25,7 +23,7 @@ export default registerAs(
       process.env.NODE_ENV === 'development' ||
       process.env.DATABASE_QUERY_LOGGING === '1',
     namingStrategy: new SnakeNamingStrategy(),
-    migrations: ['dist/src/database/migrations/*.js'],
+    migrations: ['dist/src/common/database/migrations/*.js'],
   }),
 );
 

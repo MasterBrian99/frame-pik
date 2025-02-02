@@ -2,13 +2,13 @@ import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigType } from '@nestjs/config';
-import databaseConfig from './database/database.config';
-import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
+import databaseConfig from './common/database/database.config';
+import { DatabaseModule } from './common/database/database.module';
+import { AuthModule } from './core/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
-import { UserModule } from './user/user.module';
+import { UserModule } from './core/user/user.module';
 import { ClsModule } from 'nestjs-cls';
 
 @Module({
