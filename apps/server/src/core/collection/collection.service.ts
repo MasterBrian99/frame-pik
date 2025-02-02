@@ -14,6 +14,8 @@ import { ERROR_MESSAGES } from 'src/utils/error-messages';
 import { Transactional } from 'typeorm-transactional';
 import { StorageService } from 'src/common/storage/storage.service';
 import { UserEntity } from 'src/common/database/entity/user.entity';
+import { CollectionUserEntity } from 'src/common/database/entity/collection-user.entity';
+import { COLLECTION_ROLE } from 'src/utils/constants';
 
 @Injectable()
 export class CollectionService {
@@ -22,6 +24,8 @@ export class CollectionService {
   constructor(
     @InjectRepository(CollectionEntity)
     private readonly collectionEntityRepository: Repository<CollectionEntity>,
+    @InjectRepository(CollectionUserEntity)
+    private readonly collectionUserEntityRepository: Repository<CollectionUserEntity>,
     private readonly storageService: StorageService,
   ) {}
   @Transactional()
@@ -58,7 +62,13 @@ export class CollectionService {
       collection.name = createCollectionDto.name;
       collection.folderName = createCollectionDto.folderName;
       collection.description = createCollectionDto.description;
-      await this.collectionEntityRepository.save(collection);
+      const savedCollection =
+        await this.collectionEntityRepository.save(collection);
+      const collectionUserEntity = new CollectionUserEntity();
+      collectionUserEntity.collection = savedCollection;
+      collectionUserEntity.user = currentUser;
+      collectionUserEntity.role = COLLECTION_ROLE.OWNER;
+      await this.collectionUserEntityRepository.save(collectionUserEntity);
       return;
     } catch (error) {
       this.logger.error(error);

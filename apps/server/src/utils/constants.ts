@@ -12,3 +12,8 @@ export enum TokenType {
   ACCESS_TOKEN = 'ACCESS_TOKEN',
   REFRESH_TOKEN = 'REFRESH_TOKEN',
 }
+
+export enum COLLECTION_ROLE {
+  OWNER = 'OWNER',
+  USER = 'USER',
+}

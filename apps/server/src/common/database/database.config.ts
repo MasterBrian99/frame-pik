@@ -4,6 +4,8 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import * as dotenv from 'dotenv';
 import { UserEntity } from './entity/user.entity';
 import { CollectionEntity } from './entity/collection.entity';
+import { Collection } from 'typeorm';
+import { CollectionUserEntity } from './entity/collection-user.entity';
 
 dotenv.config({
   path: '.env',
@@ -19,7 +21,7 @@ export default registerAs(
     password: process.env.DATABASE_PASSWORD,
     port: Number(process.env.DATABASE_PORT) || 5432,
     database: process.env.DATABASE_NAME,
-    entities: [UserEntity, CollectionEntity],
+    entities: [UserEntity, CollectionEntity, CollectionUserEntity],
     logging:
       process.env.NODE_ENV === 'development' ||
       process.env.DATABASE_QUERY_LOGGING === '1',

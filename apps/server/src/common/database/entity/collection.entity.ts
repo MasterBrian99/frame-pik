@@ -1,7 +1,6 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { UserEntity } from './user.entity';
-import { ContextProvider } from 'src/common/providers/context.provider';
+import { CollectionUserEntity } from './collection-user.entity';
 
 @Entity({ name: 'collection' })
 export class CollectionEntity extends BaseEntity {
@@ -23,16 +22,6 @@ export class CollectionEntity extends BaseEntity {
   })
   description: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.collections)
-  @JoinColumn({ name: 'collection_user' })
-  collectionUser: UserEntity;
-
-  @BeforeInsert()
-  setCollectionUser() {
-    const user = ContextProvider.getAuthUser();
-
-    if (user) {
-      this.collectionUser = user;
-    }
-  }
+  @OneToMany(() => CollectionUserEntity, (cu) => cu.collection)
+  collectionUser: CollectionUserEntity[];
 }
