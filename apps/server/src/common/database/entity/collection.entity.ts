@@ -1,5 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { UserEntity } from './user.entity';
+import { ContextProvider } from 'src/common/providers/context.provider';
 
 @Entity({ name: 'collection' })
 export class CollectionEntity extends BaseEntity {
@@ -20,4 +22,17 @@ export class CollectionEntity extends BaseEntity {
     type: 'text',
   })
   description: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.collections)
+  @JoinColumn({ name: 'collection_user' })
+  collectionUser: UserEntity;
+
+  @BeforeInsert()
+  setCollectionUser() {
+    const user = ContextProvider.getAuthUser();
+
+    if (user) {
+      this.collectionUser = user;
+    }
+  }
 }

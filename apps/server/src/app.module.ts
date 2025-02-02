@@ -12,6 +12,7 @@ import { UserModule } from './core/user/user.module';
 import { ClsModule } from 'nestjs-cls';
 import { CollectionModule } from './core/collection/collection.module';
 import { StorageModule } from './common/storage/storage.module';
+import { AlbumModule } from './core/album/album.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { StorageModule } from './common/storage/storage.module';
     UserModule,
     CollectionModule,
     StorageModule,
+    AlbumModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

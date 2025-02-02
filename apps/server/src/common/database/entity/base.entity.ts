@@ -34,7 +34,6 @@ export class BaseEntity {
   @BeforeInsert()
   setCreatedBy() {
     const user = ContextProvider.getAuthUser();
-    console.log('user', user);
 
     if (user) {
       this.createdBy = user.id;

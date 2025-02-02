@@ -1,6 +1,7 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { RoleType } from 'src/utils/constants';
+import { CollectionEntity } from './collection.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
@@ -23,4 +24,6 @@ export class UserEntity extends BaseEntity {
 
   @Column({ name: 'code', nullable: false, type: 'text', unique: true })
   code: string;
+  @OneToMany(() => CollectionEntity, (ce) => ce.collectionUser)
+  collections: CollectionEntity[];
 }

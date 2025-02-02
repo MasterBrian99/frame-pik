@@ -23,9 +23,7 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
-  @Auth([RoleType.ADMIN, RoleType.USER], {
-    public: false,
-  })
+  @Auth([RoleType.ADMIN, RoleType.USER])
   @Post()
   async create(
     @AuthUser() user: UserEntity,
