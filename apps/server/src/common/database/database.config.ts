@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import * as dotenv from 'dotenv';
 import { UserEntity } from './entity/user.entity';
+import { CollectionEntity } from './entity/collection.entity';
 
 dotenv.config({
   path: '.env',
@@ -18,7 +19,7 @@ export default registerAs(
     password: process.env.DATABASE_PASSWORD,
     port: Number(process.env.DATABASE_PORT) || 5432,
     database: process.env.DATABASE_NAME,
-    entities: [UserEntity],
+    entities: [UserEntity, CollectionEntity],
     logging:
       process.env.NODE_ENV === 'development' ||
       process.env.DATABASE_QUERY_LOGGING === '1',

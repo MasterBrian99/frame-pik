@@ -17,7 +17,7 @@ import { TokenPayloadDto } from './dto/token-payload.dto';
 import { TokenType } from 'src/utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-
+import * as crypto from 'crypto';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -42,6 +42,7 @@ export class AuthService {
       user.password = await this.passwordService.hashPassword(
         createAuthDto.password,
       );
+      user.code = crypto.randomUUID();
       await this.userRepository.save(user);
       return;
     } catch (error) {

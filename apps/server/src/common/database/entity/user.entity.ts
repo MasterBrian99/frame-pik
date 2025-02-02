@@ -4,7 +4,13 @@ import { RoleType } from 'src/utils/constants';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
-  @Column({ name: 'email', length: 255, nullable: false, type: 'varchar' })
+  @Column({
+    name: 'email',
+    length: 255,
+    nullable: false,
+    type: 'varchar',
+    unique: true,
+  })
   email: string;
   @Column({ name: 'password', nullable: true, type: 'text' })
   password: string;
@@ -14,4 +20,7 @@ export class UserEntity extends BaseEntity {
 
   @Column({ type: 'varchar', default: RoleType.USER, length: 20 })
   role!: string;
+
+  @Column({ name: 'code', nullable: false, type: 'text', unique: true })
+  code: string;
 }

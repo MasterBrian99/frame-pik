@@ -10,6 +10,8 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { UserModule } from './core/user/user.module';
 import { ClsModule } from 'nestjs-cls';
+import { CollectionModule } from './core/collection/collection.module';
+import { StorageModule } from './common/storage/storage.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { ClsModule } from 'nestjs-cls';
     }),
     AuthModule,
     UserModule,
+    CollectionModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],
