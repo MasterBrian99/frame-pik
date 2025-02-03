@@ -5,4 +5,8 @@ export const ERROR_MESSAGES = {
   COLLECTION_NAME_ALREADY_EXIST: 'Collection with this name already exist',
   COLLECTION_FOLDER_NAME_ALREADY_EXIST:
     'Collection with this folder name already exist',
+  COLLECTION_NOT_FOUND: 'Collection not found',
+  ALBUM_NAME_ALREADY_EXIST: 'Album with this name already exist',
+  ALBUM_FOLDER_NAME_ALREADY_EXIST: 'Album with this folder name already exist',
+  ALBUM_NOT_FOUND: 'Album not found',
 };

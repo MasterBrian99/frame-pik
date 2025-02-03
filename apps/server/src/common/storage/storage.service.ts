@@ -44,6 +44,27 @@ export class StorageService {
       );
     }
   }
+  async createFolderAlbum(
+    ownerId: string,
+    collectionPath: string,
+    albumPath: string,
+  ) {
+    const folderPath = path.join(
+      this._getCollectionPath(),
+      ownerId,
+      collectionPath,
+      `albums_${ownerId}`,
+      albumPath,
+    );
+    try {
+      await fs.ensureDir(folderPath);
+      this.logger.log(`Folder created: ${folderPath}`);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error creating folder: ${folderPath}`,
+      );
+    }
+  }
   async createFolder(folderName: string): Promise<void> {
     const folderPath = path.join(this.storagePath, folderName);
     try {

@@ -4,6 +4,7 @@ import databaseConfig from './database.config';
 import { UserEntity } from './entity/user.entity';
 import { CollectionEntity } from './entity/collection.entity';
 import { CollectionUserEntity } from './entity/collection-user.entity';
+import { AlbumEntity } from './entity/album.entity';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { CollectionUserEntity } from './entity/collection-user.entity';
       UserEntity,
       CollectionEntity,
       CollectionUserEntity,
+      AlbumEntity,
     ]),
   ],
   exports: [TypeOrmModule],

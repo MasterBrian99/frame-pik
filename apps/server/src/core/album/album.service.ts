@@ -1,11 +1,76 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { CollectionUserEntity } from 'src/common/database/entity/collection-user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/common/database/entity/user.entity';
+import { COLLECTION_ROLE } from 'src/utils/constants';
+import { StorageService } from 'src/common/storage/storage.service';
+import { AlbumEntity } from 'src/common/database/entity/album.entity';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
 
 @Injectable()
 export class AlbumService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  private readonly logger = new Logger(AlbumService.name);
+
+  constructor(
+    @InjectRepository(CollectionUserEntity)
+    private readonly collectionUserEntityRepository: Repository<CollectionUserEntity>,
+    @InjectRepository(AlbumEntity)
+    private readonly albumEntityRepository: Repository<AlbumEntity>,
+    private readonly storageService: StorageService,
+  ) {}
+  async create(user: UserEntity, createAlbumDto: CreateAlbumDto) {
+    const existCollection = await this.collectionUserEntityRepository.findOne({
+      where: {
+        user: {
+          id: user.id,
+        },
+        collection: {
+          id: createAlbumDto.collectionId,
+        },
+      },
+    });
+    if (!existCollection) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+
+    const collectionOwner = await this.collectionUserEntityRepository.findOne({
+      where: {
+        collection: {
+          id: existCollection.collection.id,
+        },
+        role: COLLECTION_ROLE.OWNER,
+      },
+    });
+    if (!collectionOwner) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+    try {
+      await this.storageService.createFolderAlbum(
+        collectionOwner.user.code,
+        collectionOwner.collection.folderName,
+        createAlbumDto.folderName,
+      );
+      const album = new AlbumEntity();
+      album.name = createAlbumDto.name;
+      album.folderName = createAlbumDto.folderName;
+      album.description = createAlbumDto.description;
+      album.collection = existCollection.collection;
+      await this.albumEntityRepository.save(album);
+      return;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   findAll() {

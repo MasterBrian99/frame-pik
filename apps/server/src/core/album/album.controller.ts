@@ -1,15 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { UserEntity } from 'src/common/database/entity/user.entity';
+import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
+import { Auth } from 'src/common/decorators/auth/http.decorators';
+import { RoleType } from 'src/utils/constants';
 
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
-
+  @Auth([RoleType.ADMIN, RoleType.USER])
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+  async create(
+    @AuthUser() user: UserEntity,
+    @Body() createAlbumDto: CreateAlbumDto,
+  ) {
+    return await this.albumService.create(user, createAlbumDto);
   }
 
   @Get()
