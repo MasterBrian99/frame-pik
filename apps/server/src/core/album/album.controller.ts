@@ -11,11 +11,11 @@ import {
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { UserEntity } from 'src/common/database/entity/user.entity';
+import { UserEntity } from 'src/integrations/database/entity/user.entity';
 import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
 import { Auth } from 'src/common/decorators/auth/http.decorators';
 import { RoleType } from 'src/utils/constants';
-import { StandardResponse } from 'src/common/utils/standard-response';
+import { StandardResponse } from 'src/utils/standard-response';
 import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
 
 @Controller('album')

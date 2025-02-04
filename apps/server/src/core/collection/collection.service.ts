@@ -8,13 +8,13 @@ import {
 import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CollectionEntity } from 'src/common/database/entity/collection.entity';
+import { CollectionEntity } from 'src/integrations/database/entity/collection.entity';
 import { Repository } from 'typeorm';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
 import { Transactional } from 'typeorm-transactional';
-import { StorageService } from 'src/common/storage/storage.service';
-import { UserEntity } from 'src/common/database/entity/user.entity';
-import { CollectionUserEntity } from 'src/common/database/entity/collection-user.entity';
+import { StorageService } from 'src/integrations/storage/storage.service';
+import { UserEntity } from 'src/integrations/database/entity/user.entity';
+import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
 import { COLLECTION_ROLE } from 'src/utils/constants';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventPayloads } from '../interface/event-types.interface';
+import { EventPayloads } from '../../common/interface/event-types.interface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()

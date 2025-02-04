@@ -1,4 +1,4 @@
-import { ContextProvider } from 'src/common/providers/context.provider';
+import { ContextProvider } from 'src/integrations/providers/context.provider';
 import { STATUS } from 'src/utils/constants';
 import {
   BeforeInsert,

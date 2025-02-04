@@ -21,14 +21,14 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
-import { StandardResponse } from 'src/common/utils/standard-response';
+import { StandardResponse } from 'src/utils/standard-response';
 import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { RoleType } from 'src/utils/constants';
 import { Auth } from 'src/common/decorators/auth/http.decorators';
 import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
-import { UserEntity } from 'src/common/database/entity/user.entity';
+import { UserEntity } from 'src/integrations/database/entity/user.entity';
 
 @Controller('auth')
 export class AuthController {

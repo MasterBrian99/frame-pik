@@ -7,13 +7,13 @@ import {
 } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { CollectionUserEntity } from 'src/common/database/entity/collection-user.entity';
+import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/common/database/entity/user.entity';
+import { UserEntity } from 'src/integrations/database/entity/user.entity';
 import { COLLECTION_ROLE } from 'src/utils/constants';
-import { StorageService } from 'src/common/storage/storage.service';
-import { AlbumEntity } from 'src/common/database/entity/album.entity';
+import { StorageService } from 'src/integrations/storage/storage.service';
+import { AlbumEntity } from 'src/integrations/database/entity/album.entity';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
 
 @Injectable()
