@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -36,6 +37,7 @@ export class AlbumService {
           id: createAlbumDto.collectionId,
         },
       },
+      relations: ['collection'],
     });
     if (!existCollection) {
       throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
@@ -48,9 +50,29 @@ export class AlbumService {
         },
         role: COLLECTION_ROLE.OWNER,
       },
+      relations: ['user', 'collection'],
     });
     if (!collectionOwner) {
       throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+    const exitsAlbumByName = await this.albumEntityRepository.findOne({
+      where: {
+        name: createAlbumDto.name,
+      },
+    });
+    if (exitsAlbumByName) {
+      throw new BadRequestException(ERROR_MESSAGES.ALBUM_NAME_ALREADY_EXIST);
+    }
+
+    const exitsAlbumByFolderName = await this.albumEntityRepository.findOne({
+      where: {
+        folderName: createAlbumDto.folderName,
+      },
+    });
+    if (exitsAlbumByFolderName) {
+      throw new BadRequestException(
+        ERROR_MESSAGES.ALBUM_FOLDER_NAME_ALREADY_EXIST,
+      );
     }
     try {
       await this.storageService.createFolderAlbum(

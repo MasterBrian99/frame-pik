@@ -53,7 +53,7 @@ export class StorageService {
       this._getCollectionPath(),
       ownerId,
       collectionPath,
-      `albums_${ownerId}`,
+      `albums`,
       albumPath,
     );
     try {

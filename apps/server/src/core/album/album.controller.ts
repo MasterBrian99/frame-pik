@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -14,6 +15,8 @@ import { UserEntity } from 'src/common/database/entity/user.entity';
 import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
 import { Auth } from 'src/common/decorators/auth/http.decorators';
 import { RoleType } from 'src/utils/constants';
+import { StandardResponse } from 'src/common/utils/standard-response';
+import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
 
 @Controller('album')
 export class AlbumController {
@@ -24,7 +27,15 @@ export class AlbumController {
     @AuthUser() user: UserEntity,
     @Body() createAlbumDto: CreateAlbumDto,
   ) {
-    return await this.albumService.create(user, createAlbumDto);
+    try {
+      return new StandardResponse<void>(
+        HttpStatus.CREATED,
+        SUCCESS_MESSAGES.SUCCESS,
+        await this.albumService.create(user, createAlbumDto),
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get()

@@ -6,6 +6,7 @@ import { UserEntity } from './entity/user.entity';
 import { CollectionEntity } from './entity/collection.entity';
 import { CollectionUserEntity } from './entity/collection-user.entity';
 import { AlbumEntity } from './entity/album.entity';
+import { SnapEntity } from './entity/snap.entity';
 
 dotenv.config({
   path: '.env',
@@ -21,7 +22,13 @@ export default registerAs(
     password: process.env.DATABASE_PASSWORD,
     port: Number(process.env.DATABASE_PORT) || 5432,
     database: process.env.DATABASE_NAME,
-    entities: [UserEntity, CollectionEntity, CollectionUserEntity, AlbumEntity],
+    entities: [
+      UserEntity,
+      CollectionEntity,
+      CollectionUserEntity,
+      AlbumEntity,
+      SnapEntity,
+    ],
     logging:
       process.env.NODE_ENV === 'development' ||
       process.env.DATABASE_QUERY_LOGGING === '1',

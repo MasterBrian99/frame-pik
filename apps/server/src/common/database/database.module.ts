@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import databaseConfig from './database.config';
 import { UserEntity } from './entity/user.entity';
 import { CollectionEntity } from './entity/collection.entity';
 import { CollectionUserEntity } from './entity/collection-user.entity';
 import { AlbumEntity } from './entity/album.entity';
+import { SnapEntity } from './entity/snap.entity';
 
 @Module({
   imports: [
@@ -13,6 +13,7 @@ import { AlbumEntity } from './entity/album.entity';
       CollectionEntity,
       CollectionUserEntity,
       AlbumEntity,
+      SnapEntity,
     ]),
   ],
   exports: [TypeOrmModule],

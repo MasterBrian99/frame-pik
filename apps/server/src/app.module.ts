@@ -13,6 +13,10 @@ import { ClsModule } from 'nestjs-cls';
 import { CollectionModule } from './core/collection/collection.module';
 import { StorageModule } from './common/storage/storage.module';
 import { AlbumModule } from './core/album/album.module';
+import { SnapModule } from './core/snap/snap.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ThumbnailGenerateModule } from './common/thumbnail-generate/thumbnail-generate.module';
+import { TypedEventEmitterModule } from './common/event-emitter/typed-event-emitter.module';
 
 @Module({
   imports: [
@@ -27,6 +31,8 @@ import { AlbumModule } from './core/album/album.module';
         mount: true,
       },
     }),
+    EventEmitterModule.forRoot(),
+    TypedEventEmitterModule,
     DatabaseModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -46,6 +52,8 @@ import { AlbumModule } from './core/album/album.module';
     CollectionModule,
     StorageModule,
     AlbumModule,
+    SnapModule,
+    ThumbnailGenerateModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

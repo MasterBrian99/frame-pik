@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
 } from 'typeorm';
@@ -29,7 +30,7 @@ export class AlbumEntity extends BaseEntity {
   })
   description: string;
 
-  @OneToOne(() => CollectionEntity)
+  @ManyToOne(() => CollectionEntity, (c) => c.albums)
   @JoinColumn({
     name: 'collection_id',
   })
