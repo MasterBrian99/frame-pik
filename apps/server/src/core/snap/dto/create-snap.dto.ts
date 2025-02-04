@@ -1,1 +1,7 @@
-export class CreateSnapDto {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
+
+export class CreateSnapDto {
+  @ApiProperty()
+  albumId: number;
+}

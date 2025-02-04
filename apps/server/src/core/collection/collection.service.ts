@@ -54,7 +54,7 @@ export class CollectionService {
       );
     }
     try {
-      await this.storageService.createFolderCollection(
+      await this.storageService.createUserCollectionFolder(
         createCollectionDto.folderName,
         currentUser.code,
       );

@@ -8,25 +8,44 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  HttpStatus,
 } from '@nestjs/common';
 import { SnapService } from './snap.service';
 import { CreateSnapDto } from './dto/create-snap.dto';
 import { UpdateSnapDto } from './dto/update-snap.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
+import { StandardResponse } from 'src/utils/standard-response';
+import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
+import { Auth } from 'src/common/decorators/auth/http.decorators';
+import { RoleType } from 'src/utils/constants';
+import { UserEntity } from 'src/integrations/database/entity/user.entity';
+import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
 @Controller('snap')
 export class SnapController {
   constructor(private readonly snapService: SnapService) {}
-
+  @Auth([RoleType.ADMIN, RoleType.USER])
   @UseInterceptors(FileInterceptor('file'), CustomFileInterceptor)
   @Post('single')
-  create(
+  async create(
+    @AuthUser() user: UserEntity,
     @Body() createSnapDto: CreateSnapDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(file);
-
-    return this.snapService.create(createSnapDto);
+    try {
+      const data = await this.snapService.createSingle(
+        user,
+        file,
+        createSnapDto,
+      );
+      return new StandardResponse(
+        HttpStatus.CREATED,
+        SUCCESS_MESSAGES.SUCCESS,
+        data,
+      );
+    } catch (e) {
+      throw e;
+    }
   }
 
   @Get()

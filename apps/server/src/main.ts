@@ -6,7 +6,11 @@ import { setupSwagger } from './setup-swagger';
 
 async function bootstrap() {
   initializeTransactionalContext();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+    cors: true,
+    bodyParser: true,
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
   if (process.env.ENABLE_DOCUMENTATION == '1') {

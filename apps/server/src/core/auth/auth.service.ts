@@ -18,6 +18,7 @@ import { TokenType } from 'src/utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+import { StorageService } from 'src/integrations/storage/storage.service';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly storageService: StorageService,
   ) {}
   async register(createAuthDto: CreateAuthDto) {
     const alreadyExist = await this.userRepository.findOne({
@@ -42,8 +44,10 @@ export class AuthService {
       user.password = await this.passwordService.hashPassword(
         createAuthDto.password,
       );
-      user.code = crypto.randomUUID();
+      const userID = crypto.randomUUID();
+      user.code = userID;
       await this.userRepository.save(user);
+      await this.storageService.createUserFolders(userID);
       return;
     } catch (error) {
       this.logger.error(error);

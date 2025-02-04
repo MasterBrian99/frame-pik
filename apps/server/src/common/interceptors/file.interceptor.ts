@@ -19,7 +19,6 @@ export class FileInterceptor implements NestInterceptor {
     if (!contentType.includes('multipart/form-data')) {
       throw new BadRequestException('Invalid multipart content type');
     }
-    console.log('hello');
 
     return next.handle();
   }
