@@ -8,4 +8,7 @@ export class SnapEntity extends BaseEntity {
 
   @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
+
+  @Column({ name: 'path', type: 'text' })
+  path: string;
 }
