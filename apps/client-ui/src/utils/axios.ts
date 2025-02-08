@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Axios, { AxiosResponse } from "axios";
+import toast from "react-hot-toast";
 // import customNotification from "@/notification";
 
 const baseURL = `${import.meta.env.VITE_BASE_URL}`;
@@ -34,7 +35,7 @@ axios.interceptors.response.use(
   (error: {
     response: {
       status: number;
-      data: { error_code: string; error_message: string };
+      data: { error: string; message: string; statusCode: number };
     };
   }) => {
     if (error.response.status === 401) {
@@ -47,6 +48,8 @@ axios.interceptors.response.use(
     //   title: "Error",
     //   message: error.response.data.error_message || "",
     // });
+    // console.log(error.response.data);
+    toast.error(error.response.data.message);
     return Promise.reject(error);
   }
 );

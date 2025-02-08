@@ -3,3 +3,7 @@ export type RegisterRequestType = {
   name: string;
   password: string;
 };
+export type LoginRequestType = {
+  email: string;
+  password: string;
+};
