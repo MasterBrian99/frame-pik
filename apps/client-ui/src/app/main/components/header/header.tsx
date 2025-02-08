@@ -2,12 +2,20 @@ import { Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "@tanstack/react-router";
+import { useUserProfile } from "@/services/hooks/use-user";
 const Header = () => {
+  const navigate = useNavigate();
+  const profileImage = useUserProfile();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex items-center justify-between h-16 max-w-6xl px-4 mx-auto md:px-6">
@@ -58,6 +66,59 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <ModeToggle />
+          {/* ///awatar  */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="w-8 h-8 ">
+                <AvatarImage
+                  src={
+                    profileImage.isSuccess
+                      ? URL.createObjectURL(profileImage.data)
+                      : ""
+                  }
+                  alt="profile-image"
+                />
+                <AvatarFallback></AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate({
+                      to: "/profile",
+                    });
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="relative">
+                      <Avatar className="w-12 h-12 ">
+                        <AvatarImage
+                          src={
+                            profileImage.isSuccess
+                              ? URL.createObjectURL(profileImage.data)
+                              : ""
+                          }
+                          alt="@shadcn"
+                        />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <div className="absolute inset-0 rounded-full shadow-inner"></div>
+                    </div>
+                    <div className="ml-4">
+                      <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                        Jane Doe
+                      </h2>
+                      <p className="text-gray-600">Software Engineer</p>
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Keyboard shortcuts</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

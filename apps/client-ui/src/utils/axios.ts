@@ -15,7 +15,7 @@ const axios = Axios.create({
 axios.interceptors.request.use(
   (config) => {
     // Read token for anywhere, in this case directly from localStorage
-    const token = localStorage.getItem("_auth");
+    const token = localStorage.getItem("auth.token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

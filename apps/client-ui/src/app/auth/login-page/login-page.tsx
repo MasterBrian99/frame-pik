@@ -13,7 +13,16 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { useLoginUser } from "@/services/hooks/use-auth";
+import toast from "react-hot-toast";
+import { useAuth } from "@/auth";
+import { useNavigate, useRouter } from "@tanstack/react-router";
+
+const fallback = "/dashboard" as const;
+
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const router = useRouter();
   const loginUser = useLoginUser();
   const form = useForm({
     resolver: zodResolver(schema),
@@ -23,11 +32,23 @@ const LoginPage = () => {
     },
   });
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
-    loginUser.mutate({
-      email: values.email,
-      password: values.password,
-    });
+    loginUser.mutate(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: async (data) => {
+          console.log(data);
+          if (data && data.data) {
+            toast.success(data.message);
+            await auth.login(data.data.accessToken);
+            await router.invalidate();
+            await navigate({ to: fallback });
+          }
+        },
+      }
+    );
   }
   return (
     <>
