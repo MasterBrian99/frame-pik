@@ -6,8 +6,16 @@ export class TokenPayloadDto {
   @ApiProperty()
   accessToken: string;
 
-  constructor(data: { expiresIn: string; accessToken: string }) {
+  @ApiProperty()
+  userId: number;
+
+  constructor(data: {
+    expiresIn: string;
+    accessToken: string;
+    userId: number;
+  }) {
     this.expiresIn = data.expiresIn;
     this.accessToken = data.accessToken;
+    this.userId = data.userId;
   }
 }

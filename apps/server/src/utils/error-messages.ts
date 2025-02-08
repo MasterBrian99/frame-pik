@@ -10,4 +10,5 @@ export const ERROR_MESSAGES = {
   ALBUM_FOLDER_NAME_ALREADY_EXIST: 'Album with this folder name already exist',
   ALBUM_NOT_FOUND: 'Album not found',
   COLLECTION_OWNER_NOT_FOUND: 'Collection owner not found',
+  PROFILE_IMAGE_NOT_FOUND: 'Profile image not found',
 };

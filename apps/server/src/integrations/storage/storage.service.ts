@@ -2,11 +2,14 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { TypedEventEmitter } from '../event-emitter/typed-event-emitter.class';
+import * as mime from 'mime-types';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
 @Injectable()
 export class StorageService {
   private readonly storagePath: string;
@@ -26,9 +29,11 @@ export class StorageService {
   async createUserFolders(userId: string): Promise<void> {
     const userFolder = path.join(this.storagePath, userId);
     const collectionsFolder = path.join(userFolder, 'collections');
+    const profileImageFolder = path.join(userFolder, 'profile-images');
     try {
       await fs.ensureDir(userFolder);
       await fs.ensureDir(collectionsFolder);
+      await fs.ensureDir(profileImageFolder);
       this.logger.log(`Folder created: ${userFolder}`);
       this.logger.log(`Folder created: ${collectionsFolder}`);
     } catch (error) {
@@ -114,6 +119,34 @@ export class StorageService {
         `Error creating file: ${filePath}`,
       );
     }
+  }
+  async createNewProfileImage(ownerId: string, file: Express.Multer.File) {
+    const folderPath = path.join(this.storagePath, ownerId, 'profile-images');
+    const filePath = path.join(folderPath, file.originalname);
+    try {
+      // await fs.copyFile(file.path, path.join(folderPath, file.originalname));
+      await fs.writeFile(filePath, file.buffer);
+      this.logger.log(`File created: ${filePath}`);
+      return filePath;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        `Error creating file: ${filePath}`,
+      );
+    }
+  }
+  async getProfileImage(ownerId: string, fileName: string) {
+    const folderPath = path.join(this.storagePath, ownerId, 'profile-images');
+    const filePath = path.join(folderPath, fileName);
+    // if (!(await this.exists(filePath))) {
+    //   throw new NotFoundException(ERROR_MESSAGES.PROFILE_IMAGE_NOT_FOUND);
+    // }
+    const mimeType = mime.contentType(path.extname(filePath));
+
+    return {
+      filePath,
+      mimeType,
+    };
   }
   async saveThumbnail(image: Buffer, filePath: string) {
     const folderPath = path.join(path.dirname(filePath), '.thumbnail');

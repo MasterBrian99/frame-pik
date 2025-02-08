@@ -69,6 +69,7 @@ export class AuthService {
         type: TokenType.ACCESS_TOKEN,
         role: data.role,
       }),
+      userId: data.userId,
     });
   }
   async validateUser(userLoginDto: LoginAuthDto): Promise<UserEntity> {
