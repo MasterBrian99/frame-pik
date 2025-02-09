@@ -10,7 +10,7 @@ function customNotification(
     withCloseButton: true,
     title,
     message,
-    loading: loading,
+    loading,
   });
 }
 

@@ -1,11 +1,10 @@
-import { ColorSchemeToggle } from '../components/color-scheme-toggle/color-scheme-toggle';
-import { Welcome } from '../components/Welcome/Welcome';
+import { Box } from '@mantine/core';
+import Header from '@/app/main/components/header/header';
 
 export function HomePage() {
   return (
-    <>
-      <Welcome />
-      <ColorSchemeToggle />
-    </>
+    <Box>
+      <Header />
+    </Box>
   );
 }

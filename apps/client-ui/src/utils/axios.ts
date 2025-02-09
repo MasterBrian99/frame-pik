@@ -1,8 +1,6 @@
+/* eslint-disable no-param-reassign */
 import Axios, { AxiosResponse } from 'axios';
-import { notifications } from '@mantine/notifications';
-import { ErrorResponseT } from '@/types/common';
-
-// import customNotification from '@/notification';
+import customNotification from '@/shared/notifications';
 
 const baseURL = `${import.meta.env.VITE_BASE_URL}`;
 
@@ -19,8 +17,6 @@ axios.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.Authorization;
     }
     return config;
   },
@@ -31,32 +27,28 @@ axios.interceptors.response.use(
     // console.table([response.data, response.request.responseURL]);
     /// do some notifications
     if (response.status === 401) {
-      window.location.href = '/auth/login';
+      // window.location.href = '/auth/login';
     }
     return response;
   },
   (error: {
     response: {
-      data: ErrorResponseT;
       status: number;
+      data: { error: string; message: string; statusCode: number };
     };
   }) => {
-    console.log(error.response);
-    notifications.show({
-      message: error.response.data.message,
-      color: 'red',
-      title: 'Error',
-    });
     if (error.response.status === 401) {
-      window.location.href = '/auth/login';
+      // window.location.href = '/auth/login';
     }
-    // if (error.response.status === 500) {
-    //   window.location.href = '/auth/login';
-    // }
-    // customNotification('error', {
-    //   title: 'Error',
-    //   message: error.response.data.error_message || '',
-    // });
+    if (error.response.status === 500) {
+      // window.location.href = '/auth/login';
+    }
+    customNotification('error', {
+      title: 'Error',
+      message: error.response.data.message || '',
+    });
+    // console.log(error.response.data);
+    // toast.error(error.response.data.message);
     return Promise.reject(error);
   }
 );

@@ -1,59 +1,59 @@
 import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseModule } from './database/database.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+import databaseConfig from './integrations/database/database.config';
+import { DatabaseModule } from './integrations/database/database.module';
+import { AuthModule } from './core/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { ClsModule } from 'nestjs-cls';
-import { SnapModule } from './snap/snap.module';
-import { WallModule } from './wall/wall.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { UserModule } from './core/user/user.module';
+import { ClsModule } from 'nestjs-cls';
+import { CollectionModule } from './core/collection/collection.module';
+import { StorageModule } from './integrations/storage/storage.module';
+import { AlbumModule } from './core/album/album.module';
+import { SnapModule } from './core/snap/snap.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ThumbnailGenerateModule } from './integrations/thumbnail-generate/thumbnail-generate.module';
+import { TypedEventEmitterModule } from './integrations/event-emitter/typed-event-emitter.module';
 
 @Module({
   imports: [
-    DatabaseModule,
+    ConfigModule.forRoot({
+      load: [databaseConfig],
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     ClsModule.forRoot({
       global: true,
       middleware: {
         mount: true,
       },
     }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: [`.env`],
-      cache: true,
-    }),
+    EventEmitterModule.forRoot(),
+    TypedEventEmitterModule,
+    DatabaseModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type:
-          (configService.get<string>('DATABASE_TYPE') as 'postgres') ||
-          'postgres',
-        host: configService.get<string>('DATABASE_HOST'),
-        username: configService.get<string>('DATABASE_USERNAME'),
-        password: configService.get<string>('DATABASE_PASSWORD'),
-        port: configService.get<number>('DATABASE_PORT'),
-        database: configService.get<string>('DATABASE_NAME'),
-        entities: [__dirname + '/database/entity/*.entity{.ts,.js}'],
-        synchronize: configService.get<number>('SYNC_MODE') == 1,
-        logging: true,
-      }),
-      async dataSourceFactory(options) {
+      inject: [databaseConfig.KEY],
+      useFactory: (dbConfig: ConfigType<typeof databaseConfig>) => {
+        return dbConfig;
+      },
+      dataSourceFactory: async (options) => {
         if (!options) {
           throw new Error('Invalid options passed');
         }
-
         return addTransactionalDataSource(new DataSource(options));
       },
     }),
     AuthModule,
     UserModule,
+    CollectionModule,
+    StorageModule,
+    AlbumModule,
     SnapModule,
-    WallModule,
+    ThumbnailGenerateModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],
