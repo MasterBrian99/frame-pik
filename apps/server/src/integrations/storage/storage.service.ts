@@ -53,6 +53,7 @@ export class StorageService {
   async createUserCollectionFolder(
     folderName: string,
     userId: string,
+    file?: Express.Multer.File,
   ): Promise<void> {
     const folderPath = path.join(
       this.storagePath,
@@ -60,9 +61,16 @@ export class StorageService {
       'collections',
       folderName,
     );
+    const thumbnailFolder = path.join(folderPath, '_thumbnails');
     try {
       await fs.ensureDir(folderPath);
+      await fs.ensureDir(thumbnailFolder);
       this.logger.log(`Folder created: ${folderPath}`);
+      if (file) {
+        //
+        const imgePath = path.join(thumbnailFolder, file.originalname);
+        await fs.writeFile(imgePath, file.buffer);
+      }
     } catch (error) {
       throw new InternalServerErrorException(
         `Error creating folder: ${folderPath}`,

@@ -23,6 +23,9 @@ export class CollectionEntity extends BaseEntity {
   })
   description: string;
 
+  @Column({ name: 'path', type: 'text', nullable: true })
+  path: string;
+
   @OneToMany(() => CollectionUserEntity, (cu) => cu.collection)
   collectionUser: CollectionUserEntity[];
   @OneToMany(() => AlbumEntity, (a) => a.collection)

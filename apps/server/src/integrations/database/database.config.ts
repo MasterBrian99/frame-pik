@@ -33,7 +33,7 @@ export default registerAs(
       process.env.NODE_ENV === 'development' ||
       process.env.DATABASE_QUERY_LOGGING === '1',
     namingStrategy: new SnakeNamingStrategy(),
-    migrations: ['dist/src/common/database/migrations/*.js'],
+    migrations: ['dist/src/integrations/database/migrations/*.js'],
   }),
 );
 

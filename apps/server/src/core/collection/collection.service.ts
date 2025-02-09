@@ -32,6 +32,7 @@ export class CollectionService {
   async create(
     currentUser: UserEntity,
     createCollectionDto: CreateCollectionDto,
+    file: Express.Multer.File,
   ) {
     if (!currentUser) {
       throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
@@ -57,10 +58,16 @@ export class CollectionService {
       await this.storageService.createUserCollectionFolder(
         createCollectionDto.folderName,
         currentUser.code,
+        file,
       );
       const collection = new CollectionEntity();
       collection.name = createCollectionDto.name;
       collection.folderName = createCollectionDto.folderName;
+      if (file) {
+        collection.path = file.originalname;
+      } else {
+        collection.path = '';
+      }
       collection.description = createCollectionDto.description;
       const savedCollection =
         await this.collectionEntityRepository.save(collection);

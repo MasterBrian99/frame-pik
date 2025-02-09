@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
@@ -18,22 +20,26 @@ import { Auth } from 'src/common/decorators/auth/http.decorators';
 import { UserEntity } from 'src/integrations/database/entity/user.entity';
 import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
 
 @ApiTags('collection')
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
   @Auth([RoleType.ADMIN, RoleType.USER])
+  @UseInterceptors(FileInterceptor('file'), CustomFileInterceptor)
   @Post()
   async create(
     @AuthUser() user: UserEntity,
     @Body() createCollectionDto: CreateCollectionDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     try {
       return new StandardResponse<void>(
         HttpStatus.CREATED,
-        SUCCESS_MESSAGES.SUCCESS,
-        await this.collectionService.create(user, createCollectionDto),
+        SUCCESS_MESSAGES.COLLECTION_CREATED,
+        await this.collectionService.create(user, createCollectionDto, file),
       );
     } catch (error) {
       throw error;
