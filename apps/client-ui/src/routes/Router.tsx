@@ -1,7 +1,15 @@
-import { createBrowserRouter, Outlet, RouteObject, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouteObject,
+  RouterProvider,
+} from 'react-router-dom';
 import LoginPage from '@/app/auth/login-page';
 import MainLayout from '@/app/main/layout/main-layout';
-import ProfilePage from '@/app/main/pages/profile-page/profile-page';
+import ProfileLayout from '@/app/main/pages/profile/layout/profile-layout';
+import CollectionPage from '@/app/main/pages/profile/pages/collection-page/collection-page';
+import SnapPage from '@/app/main/pages/profile/pages/snap-page';
 import { useAuth } from '@/provider/auth-provider';
 import { endProgress, startProgress } from '@/shared/progress';
 import { ProtectedRoute } from './protected-route';
@@ -22,7 +30,7 @@ const publicRoutes = [
     ],
   },
 ];
-const routesForAuthenticatedOnly = [
+const routesForAuthenticatedOnly: RouteObject[] = [
   {
     path: '/',
     element: <ProtectedRoute />,
@@ -48,14 +56,27 @@ const routesForAuthenticatedOnly = [
           },
           {
             path: '/profile',
-            element: <ProfilePage />,
+            element: <ProfileLayout />,
             loader: async () => {
               startProgress();
-              await Promise.all([import('@/app/main/pages/profile-page/profile-page')]);
+              await Promise.all([import('@/app/main/pages/profile/layout/profile-layout')]);
               endProgress();
               return null;
             },
-            children: [],
+            children: [
+              {
+                path: '',
+                element: <Navigate to="/profile/snaps" replace />,
+              },
+              {
+                path: 'snaps',
+                element: <SnapPage />,
+              },
+              {
+                path: 'collections',
+                element: <CollectionPage />,
+              },
+            ],
           },
         ],
       },

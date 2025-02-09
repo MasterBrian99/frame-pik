@@ -1,10 +1,15 @@
 import { useState } from 'react';
+import { Outlet, useNavigate, useNavigation, useParams, useSearchParams } from 'react-router-dom';
 import { Box, Button, Flex, Tabs, Text } from '@mantine/core';
-import MainAvatar from './components/main-avatar';
-import classes from './profile-page.module.css';
+import MainAvatar from '../components/main-avatar/main-avatar';
+import classes from './profile-layout.module.css';
 
-const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState<string | null>('snaps');
+const ProfileLayout = () => {
+  const [activeTab, setActiveTab] = useState<string | null>(
+    window.location.href.split('/').pop() || ''
+  );
+  const navigate = useNavigate();
+  const { tabValue } = useParams();
 
   return (
     <Box>
@@ -28,7 +33,11 @@ const ProfilePage = () => {
         </Flex>
       </Flex>
       <Box mt="xl">
-        <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs
+          value={tabValue}
+          onChange={(value) => navigate(`/profile/${value}`)}
+          defaultValue={window.location.href.split('/').pop() || 'snaps'}
+        >
           <Tabs.List
             classNames={{
               list: classes.tabList,
@@ -39,12 +48,13 @@ const ProfilePage = () => {
             <Tabs.Tab value="collections">Collections</Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="snaps">First panel</Tabs.Panel>
-          <Tabs.Panel value="collections">Second panel</Tabs.Panel>
+          {/* <Tabs.Panel value="snaps">First panel</Tabs.Panel>
+          <Tabs.Panel value="collections">Second panel</Tabs.Panel> */}
+          <Outlet />
         </Tabs>
       </Box>
     </Box>
   );
 };
 
-export default ProfilePage;
+export default ProfileLayout;

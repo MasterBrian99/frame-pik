@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import LoginPage from './app/auth/login-page';
 import MainLayout from './app/main/layout/main-layout';
-import ProfilePage from './app/main/pages/profile-page/profile-page';
+import ProfilePage from './app/main/pages/profile/profile-page';
 
 const router = createBrowserRouter([
   {
