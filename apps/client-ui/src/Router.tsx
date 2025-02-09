@@ -1,11 +1,18 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import LoginPage from './app/auth/login-page';
-import { HomePage } from './pages/Home.page';
+import MainLayout from './app/main/layout/main-layout';
+import ProfilePage from './app/main/pages/profile-page/profile-page';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: <MainLayout />,
+    children: [
+      {
+        path: 'profile',
+        element: <ProfilePage />,
+      },
+    ],
   },
   {
     path: '/auth',

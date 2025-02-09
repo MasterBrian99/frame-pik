@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { SearchIcon } from 'lucide-react';
 import { Avatar, Container, Flex, TextInput } from '@mantine/core';
+import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+import { useUserProfile } from '@/services/hooks/use-user';
+import HeaderMenu from '../header-menu/header-menu';
 import classes from './header.module.css';
 
 const links = [
@@ -40,7 +43,9 @@ const Header = () => {
           leftSection={<SearchIcon size={19} />}
           radius="xl"
         />
-        <Avatar ml="md" src="avatar.png" alt="it's me" size="md" />
+        <HeaderMenu />
+        {/* <Avatar ml="md" src="avatar.png" alt="it's me" size="md" /> */}
+        <ColorSchemeToggle />
       </Container>
     </header>
   );
