@@ -17,3 +17,7 @@ export enum COLLECTION_ROLE {
   OWNER = 'OWNER',
   USER = 'USER',
 }
+export enum Order {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
