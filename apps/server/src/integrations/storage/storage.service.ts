@@ -13,10 +13,67 @@ import { ERROR_MESSAGES } from 'src/utils/error-messages';
 @Injectable()
 export class StorageService {
   private readonly storagePath: string;
+  private readonly collectionsRoot: string;
+  private readonly profileImageRoot: string;
   private readonly logger = new Logger(StorageService.name);
 
   constructor(private readonly configService: ConfigService) {
     this.storagePath = path.resolve(configService.get<string>('STORAGE_PATH'));
+    this.collectionsRoot = 'collections';
+    this.profileImageRoot = 'profile-images';
+  }
+
+  async initializeUserStorage(userId: string): Promise<void> {
+    await Promise.all([
+      this.createUserRootFolder(userId),
+      this.createCollectionsFolder(userId),
+      this.createProfileImagesFolder(userId),
+    ]);
+  }
+  async createUserRootFolder(userId: string): Promise<void> {
+    await this.ensureDirectory(path.join(this.storagePath, userId));
+  }
+  async createCollectionsFolder(userId: string): Promise<void> {
+    await this.ensureDirectory(
+      path.join(this.storagePath, userId, this.collectionsRoot),
+    );
+  }
+  async createProfileImagesFolder(userId: string): Promise<void> {
+    await this.ensureDirectory(
+      path.join(this.storagePath, userId, this.profileImageRoot),
+    );
+  }
+
+  private async ensureDirectory(path: string): Promise<void> {
+    try {
+      await fs.ensureDir(path);
+      this.logger.log(`Directory ensured: ${path}`);
+    } catch (error) {
+      this.logger.error(`Failed to create directory: ${path}`, error.stack);
+      throw new InternalServerErrorException(
+        `Failed to create directory: ${path}`,
+      );
+    }
+  }
+  private async writeFile(params: {
+    path: string;
+    buffer: Buffer;
+  }): Promise<void> {
+    try {
+      await fs.writeFile(params.path, params.buffer);
+      this.logger.log(`File written: ${params.path}`);
+    } catch (error) {
+      this.logger.error(`Failed to write file: ${params.path}`, error.stack);
+      throw new InternalServerErrorException(
+        `Failed to write file: ${params.path}`,
+      );
+    }
+  }
+
+  private async validateFileExists(filePath: string): Promise<void> {
+    if (!(await fs.pathExists(filePath))) {
+      throw new NotFoundException(ERROR_MESSAGES.PROFILE_IMAGE_NOT_FOUND);
+    }
   }
 
   // private async initCollectionsFolder() {

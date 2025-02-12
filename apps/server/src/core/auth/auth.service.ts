@@ -47,7 +47,7 @@ export class AuthService {
       const userID = crypto.randomUUID();
       user.code = userID;
       await this.userRepository.save(user);
-      await this.storageService.createUserFolders(userID);
+      await this.storageService.initializeUserStorage(userID);
       return;
     } catch (error) {
       this.logger.error(error);

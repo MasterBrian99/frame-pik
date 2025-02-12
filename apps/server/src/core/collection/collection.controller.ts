@@ -9,19 +9,21 @@ import {
   HttpStatus,
   UploadedFile,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { CreateCollectionDto } from './dto/request/create-collection.dto';
+import { UpdateCollectionDto } from './dto/request/update-collection.dto';
 import { StandardResponse } from 'src/utils/standard-response';
 import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
 import { RoleType } from 'src/utils/constants';
 import { Auth } from 'src/common/decorators/auth/http.decorators';
 import { UserEntity } from 'src/integrations/database/entity/user.entity';
 import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
+import GetUserCollectionDto from './dto/request/get-user-collection.do';
 
 @ApiTags('collection')
 @Controller('collection')
@@ -43,6 +45,28 @@ export class CollectionController {
       );
     } catch (error) {
       throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'get all collection from current user',
+  })
+  @Auth([RoleType.ADMIN, RoleType.USER], {
+    public: false,
+  })
+  @Get()
+  async findAllCurrentUser(
+    @Query() pagination: GetUserCollectionDto,
+    @AuthUser() user: UserEntity,
+  ) {
+    try {
+      return new StandardResponse(
+        HttpStatus.OK,
+        SUCCESS_MESSAGES.SUCCESS,
+        await this.collectionService.findAllCurrentUser(user, pagination),
+      );
+    } catch (e) {
+      throw e;
     }
   }
 

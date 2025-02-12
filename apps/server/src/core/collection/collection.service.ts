@@ -5,8 +5,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { CreateCollectionDto } from './dto/request/create-collection.dto';
+import { UpdateCollectionDto } from './dto/request/update-collection.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionEntity } from 'src/integrations/database/entity/collection.entity';
 import { Repository } from 'typeorm';
@@ -16,6 +16,10 @@ import { StorageService } from 'src/integrations/storage/storage.service';
 import { UserEntity } from 'src/integrations/database/entity/user.entity';
 import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
 import { COLLECTION_ROLE } from 'src/utils/constants';
+import GetUserCollectionDto from './dto/request/get-user-collection.do';
+import { PageMetaDto } from 'src/common/pagination/page-meta.dto';
+import { PageDto } from 'src/common/pagination/page.dto';
+import CollectionListResponseDto from './dto/response/collection-list-response.dto';
 
 @Injectable()
 export class CollectionService {
@@ -85,6 +89,58 @@ export class CollectionService {
     }
   }
 
+  async findAllCurrentUser(user: UserEntity, pagination: GetUserCollectionDto) {
+    pagination.userId = String(user.id);
+
+    return await this.findPaginated(pagination);
+  }
+
+  async findPaginated(pagination: GetUserCollectionDto) {
+    const queryBuilder = this.collectionEntityRepository
+      .createQueryBuilder('collection')
+      .leftJoinAndSelect('collection.collectionUser', 'collectionUser'); // Corrected relation name
+
+    if (pagination.status) {
+      queryBuilder.andWhere('collection.status = :status', {
+        status: pagination.status,
+      });
+    }
+    if (pagination.search) {
+      // Combine search conditions into a single OR clause
+      queryBuilder.andWhere(
+        '(collection.name LIKE :search OR collection.description LIKE :search)',
+        {
+          search: `%${pagination.search}%`,
+        },
+      );
+    }
+    if (pagination.userId) {
+      // Reference the user_id column directly
+      queryBuilder.andWhere('collectionUser.user_id = :userId', {
+        userId: pagination.userId,
+      });
+    }
+    if (pagination.roleType) {
+      queryBuilder.andWhere('collectionUser.role = :role', {
+        role: pagination.roleType,
+      });
+    }
+    queryBuilder
+      .orderBy('collection.created_at', pagination.order)
+      .skip(pagination.skip)
+      .take(pagination.count);
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: pagination,
+    });
+
+    return new PageDto(
+      new CollectionListResponseDto(entities).getResponse(),
+      pageMetaDto,
+    );
+  }
   findAll() {
     return `This action returns all collection`;
   }
