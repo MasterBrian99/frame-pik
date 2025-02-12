@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Eye, Image } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card, Center, Group, Text, useMantineTheme } from '@mantine/core';
 import { useCollectionThumbnail } from '@/services/hooks/use-collection';
 import defaultCover from '../../../../../../assets/18-0355112-65a9a12e82913.png';
@@ -55,9 +56,8 @@ const CollectionCard = ({
       shadow="lg"
       className={classes.card}
       radius="md"
-      component="a"
-      href="https://mantine.dev/"
-      target="_blank"
+      component={Link}
+      to={`/profile/collections/${id}`}
     >
       <div
         className={classes.image}
