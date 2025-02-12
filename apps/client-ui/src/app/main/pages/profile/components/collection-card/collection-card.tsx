@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Eye, Image } from 'lucide-react';
 import { Card, Center, Group, Text, useMantineTheme } from '@mantine/core';
 import { useCollectionThumbnail } from '@/services/hooks/use-collection';
@@ -25,6 +25,30 @@ const CollectionCard = ({
   const thumbnail = useCollectionThumbnail(String(id), {
     enabled: thumbnailAvaliable && !!id,
   });
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!thumbnailAvaliable) {
+      setImageUrl(`url(${defaultCover})`);
+      return;
+    }
+    if (thumbnailAvaliable) {
+      if (thumbnail.isSuccess && thumbnail.data) {
+        const newImageUrl = URL.createObjectURL(thumbnail.data);
+        setImageUrl(newImageUrl);
+
+        // Clean up the old URL when the data changes or component unmounts
+        return () => {
+          if (imageUrl) {
+            URL.revokeObjectURL(imageUrl);
+          }
+        };
+      }
+    }
+  }, [thumbnail.isSuccess, thumbnail.data, thumbnailAvaliable]); // Important: Add dependencies
+
+  const backgroundImage = imageUrl ? `url(${imageUrl})` : `url(${defaultCover})`;
+
   return (
     <Card
       p="lg"
@@ -39,7 +63,7 @@ const CollectionCard = ({
         className={classes.image}
         style={{
           // backgroundImage: `${thumbnail.isSuccess && thumbnailAvaliable ? `url(${URL.createObjectURL(thumbnail.data)})` : ''}`,
-          backgroundImage: `${thumbnail.isSuccess && thumbnailAvaliable ? `url(${URL.createObjectURL(thumbnail.data)})` : `url(${defaultCover})`}`,
+          backgroundImage: `${backgroundImage}`,
         }}
       />
       <div className={classes.overlay} />

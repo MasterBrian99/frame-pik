@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, Button, Flex, Grid } from '@mantine/core';
+import React, { useEffect } from 'react';
+import { Box, Center, Flex, Grid, Loader } from '@mantine/core';
+import { useInViewport } from '@mantine/hooks';
 import { useCollectionCurrentUser } from '@/services/hooks/use-collection';
 import CollectionCard from '../../components/collection-card/collection-card';
 import CollectionUpload from '../../components/collection-upload/collection-upload';
@@ -7,11 +8,17 @@ import CollectionUpload from '../../components/collection-upload/collection-uplo
 const CollectionPage = () => {
   // const collectionList = useCollectionCurrentUser();
   const collectionList = useCollectionCurrentUser();
+  const { ref, inViewport } = useInViewport();
+
+  useEffect(() => {
+    if (inViewport) {
+      collectionList.fetchNextPage();
+    }
+  }, [inViewport]);
 
   return (
     <Box>
       <Flex justify="end">
-        <Button onClick={() => collectionList.fetchNextPage()}>asd</Button>
         <CollectionUpload collectionList={collectionList} />
       </Flex>
       <Grid>
@@ -24,7 +31,16 @@ const CollectionPage = () => {
                 item.data &&
                 item.data.data &&
                 item.data.data.map((coll) => (
-                  <Grid.Col span={3} key={coll.id}>
+                  <Grid.Col
+                    span={{
+                      xs: 6,
+                      sm: 6,
+                      md: 6,
+                      lg: 4,
+                      xl: 3,
+                    }}
+                    key={coll.id}
+                  >
                     <CollectionCard
                       id={coll.id}
                       description={coll.description}
@@ -50,6 +66,9 @@ const CollectionPage = () => {
           <CollectionCard />
         </Grid.Col> */}
       </Grid>
+      <Center my="xl" ref={ref}>
+        {collectionList.isFetchingNextPage && <Loader />}
+      </Center>
     </Box>
   );
 };
