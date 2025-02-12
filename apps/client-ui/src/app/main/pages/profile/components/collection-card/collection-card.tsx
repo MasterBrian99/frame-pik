@@ -1,11 +1,30 @@
 import React from 'react';
-import { Eye, MessageCircle } from 'lucide-react';
+import { Eye, Image } from 'lucide-react';
 import { Card, Center, Group, Text, useMantineTheme } from '@mantine/core';
+import { useCollectionThumbnail } from '@/services/hooks/use-collection';
+import defaultCover from '../../../../../../assets/18-0355112-65a9a12e82913.png';
 import classes from './collection-card.module.css';
 
-const CollectionCard = () => {
+interface Props {
+  id: number;
+  name: string;
+  description: string;
+  views: number;
+  thumbnailAvaliable: boolean;
+  albumCount: number;
+}
+const CollectionCard = ({
+  description,
+  name,
+  thumbnailAvaliable,
+  views,
+  albumCount,
+  id,
+}: Props) => {
   const theme = useMantineTheme();
-
+  const thumbnail = useCollectionThumbnail(String(id), {
+    enabled: thumbnailAvaliable && !!id,
+  });
   return (
     <Card
       p="lg"
@@ -19,34 +38,34 @@ const CollectionCard = () => {
       <div
         className={classes.image}
         style={{
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)',
+          // backgroundImage: `${thumbnail.isSuccess && thumbnailAvaliable ? `url(${URL.createObjectURL(thumbnail.data)})` : ''}`,
+          backgroundImage: `${thumbnail.isSuccess && thumbnailAvaliable ? `url(${URL.createObjectURL(thumbnail.data)})` : `url(${defaultCover})`}`,
         }}
       />
       <div className={classes.overlay} />
 
       <div className={classes.content}>
         <div>
-          <Text size="lg" className={classes.title} fw={500}>
-            Journey to Swiss Alps
+          <Text size="lg" className={classes.title} fw={700}>
+            {name}
           </Text>
 
           <Group justify="space-between" gap="xs">
             <Text size="sm" className={classes.author}>
-              Robert Gluesticker
+              {description}
             </Text>
 
             <Group gap="lg">
               <Center>
                 <Eye size={16} color={theme.colors.dark[2]} />
                 <Text size="sm" className={classes.bodyText}>
-                  7847
+                  {views}
                 </Text>
               </Center>
               <Center>
-                <MessageCircle size={16} color={theme.colors.dark[2]} />
+                <Image size={16} color={theme.colors.dark[2]} />
                 <Text size="sm" className={classes.bodyText}>
-                  5
+                  {albumCount}
                 </Text>
               </Center>
             </Group>

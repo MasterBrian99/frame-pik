@@ -1,5 +1,6 @@
 .card {
   position: relative;
+  height: 280px;
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
 
   @mixin hover {
@@ -45,5 +46,5 @@
 }
 
 .author {
-  color: var(--mantine-color-dark-2);
+  color: var(--mantine-color-white);
 }
