@@ -12,6 +12,9 @@ export default class CollectionListResponseDto {
         id: c.id,
         name: c.name,
         description: c.description,
+        albumCount: c.albumCount,
+        views: c.views,
+        thumbnailAvaliable: c.thumbnailPath !== null,
       };
     });
   }

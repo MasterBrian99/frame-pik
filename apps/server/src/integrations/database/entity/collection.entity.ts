@@ -29,6 +29,9 @@ export class CollectionEntity extends BaseEntity {
   @Column({ name: 'album_count', type: 'int', nullable: true, default: 0 })
   albumCount: number;
 
+  @Column({ name: 'views', type: 'int', nullable: true, default: 0 })
+  views: number;
+
   @OneToMany(() => CollectionUserEntity, (cu) => cu.collection)
   collectionUser: CollectionUserEntity[];
   @OneToMany(() => AlbumEntity, (a) => a.collection)

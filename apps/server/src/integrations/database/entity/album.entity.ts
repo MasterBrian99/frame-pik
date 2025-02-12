@@ -1,12 +1,4 @@
-import {
-  Collection,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Collection, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { CollectionEntity } from './collection.entity';
 
@@ -29,6 +21,9 @@ export class AlbumEntity extends BaseEntity {
     type: 'text',
   })
   description: string;
+
+  @Column({ name: 'snap_count', nullable: false, type: 'int', default: 0 })
+  snapCount: number;
 
   @ManyToOne(() => CollectionEntity, (c) => c.albums)
   @JoinColumn({

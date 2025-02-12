@@ -20,6 +20,7 @@ import { Auth } from '../../common/decorators/auth/http.decorators';
 import { RoleType } from '../../utils/constants';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
+import { Readable } from 'stream';
 
 @Controller('user')
 export class UserController {
@@ -50,6 +51,15 @@ export class UserController {
   ) {
     try {
       const data = await this.userService.getProfileImage(user);
+
+      if (data.filePath === null) {
+        const emptyStream = new Readable({
+          read() {
+            this.push(null); // End the stream
+          },
+        });
+        return new StreamableFile(emptyStream);
+      }
       res.set({
         'Content-Type': data.mimeType,
       });

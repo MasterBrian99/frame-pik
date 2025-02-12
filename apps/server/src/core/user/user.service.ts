@@ -37,7 +37,15 @@ export class UserService {
     }
   }
   async getProfileImage(user: UserEntity) {
+    console.log(user);
+
     try {
+      if (user.profileImage === null) {
+        return {
+          filePath: null,
+          mimeType: null,
+        };
+      }
       const filePath = await this.storageService.getProfileImage(
         user.code,
         user.profileImage,

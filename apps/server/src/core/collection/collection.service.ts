@@ -123,8 +123,9 @@ export class CollectionService {
         role: pagination.roleType,
       });
     }
+
     queryBuilder
-      .orderBy('collection.created_at', pagination.order)
+      .orderBy('collection.id', pagination.order)
       .skip(pagination.skip)
       .take(pagination.count);
     const itemCount = await queryBuilder.getCount();
@@ -138,6 +139,37 @@ export class CollectionService {
       new CollectionListResponseDto(entities).getResponse(),
       pageMetaDto,
     );
+  }
+  async getCollectionThumbnail(user: UserEntity, id: string) {
+    const collection = await this.collectionEntityRepository.findOne({
+      where: { id: Number(id) },
+    });
+    if (!collection) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+    const collectionUser = await this.collectionUserEntityRepository.findOne({
+      where: {
+        user: {
+          id: user.id,
+        },
+        collection: {
+          id: collection.id,
+        },
+      },
+    });
+    if (!collectionUser) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+    const thumbnail = await this.storageService.getCollectionThumbnail(
+      user.code,
+      collection.folderName,
+      collection.thumbnailPath,
+    );
+
+    return {
+      filePath: thumbnail.filePath,
+      mimeType: thumbnail.mimeType,
+    };
   }
   findAll() {
     return `This action returns all collection`;

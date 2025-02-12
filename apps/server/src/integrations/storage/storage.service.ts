@@ -15,12 +15,14 @@ export class StorageService {
   private readonly storagePath: string;
   private readonly collectionsRoot: string;
   private readonly profileImageRoot: string;
+  private readonly thumbnailRoot: string;
   private readonly logger = new Logger(StorageService.name);
 
   constructor(private readonly configService: ConfigService) {
     this.storagePath = path.resolve(configService.get<string>('STORAGE_PATH'));
     this.collectionsRoot = 'collections';
     this.profileImageRoot = 'profile-images';
+    this.thumbnailRoot = '_thumbnails';
   }
 
   async initializeUserStorage(userId: string): Promise<void> {
@@ -69,6 +71,52 @@ export class StorageService {
       );
     }
   }
+  async getProfileImage(ownerId: string, fileName: string) {
+    const folderPath = path.join(
+      this.storagePath,
+      ownerId,
+      this.profileImageRoot,
+    );
+    const filePath = path.join(folderPath, fileName);
+    if (!fs.pathExistsSync(filePath)) {
+      return {
+        filePath: null,
+        mimeType: null,
+      };
+    }
+    const mimeType = mime.contentType(path.extname(filePath));
+
+    return {
+      filePath,
+      mimeType,
+    };
+  }
+  async getCollectionThumbnail(
+    ownerId: string,
+    collectionPath: string,
+    thumbnailPath: string,
+  ) {
+    const folderPath = path.join(
+      this.storagePath,
+      ownerId,
+      this.collectionsRoot,
+      collectionPath,
+      this.thumbnailRoot,
+    );
+    const filePath = path.join(folderPath, thumbnailPath);
+    if (!fs.pathExistsSync(filePath)) {
+      return {
+        filePath: null,
+        mimeType: null,
+      };
+    }
+    const mimeType = mime.contentType(path.extname(filePath));
+
+    return {
+      filePath,
+      mimeType,
+    };
+  }
 
   private async validateFileExists(filePath: string): Promise<void> {
     if (!(await fs.pathExists(filePath))) {
@@ -82,30 +130,6 @@ export class StorageService {
   //     await fs.ensureDir(collectionsFolder);
   //   }
   // }
-
-  async createUserFolders(userId: string): Promise<void> {
-    const userFolder = path.join(this.storagePath, userId);
-    const collectionsFolder = path.join(userFolder, 'collections');
-    const profileImageFolder = path.join(userFolder, 'profile-images');
-    try {
-      await fs.ensureDir(userFolder);
-      await fs.ensureDir(collectionsFolder);
-      await fs.ensureDir(profileImageFolder);
-      this.logger.log(`Folder created: ${userFolder}`);
-      this.logger.log(`Folder created: ${collectionsFolder}`);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error creating folder: ${userFolder}`,
-      );
-    }
-  }
-  private _getCollectionPath(): string {
-    return path.join(this.storagePath, 'collections');
-  }
-
-  private _fullPath(filePath: string): string {
-    return path.join(this.storagePath, filePath);
-  }
 
   async createUserCollectionFolder(
     folderName: string,
@@ -124,9 +148,11 @@ export class StorageService {
       await fs.ensureDir(thumbnailFolder);
       this.logger.log(`Folder created: ${folderPath}`);
       if (file) {
-        //
         const imgePath = path.join(thumbnailFolder, file.originalname);
-        await fs.writeFile(imgePath, file.buffer);
+        await this.writeFile({
+          path: imgePath,
+          buffer: file.buffer,
+        });
       }
     } catch (error) {
       throw new InternalServerErrorException(
@@ -186,7 +212,11 @@ export class StorageService {
     }
   }
   async createNewProfileImage(ownerId: string, file: Express.Multer.File) {
-    const folderPath = path.join(this.storagePath, ownerId, 'profile-images');
+    const folderPath = path.join(
+      this.storagePath,
+      ownerId,
+      this.profileImageRoot,
+    );
     const filePath = path.join(folderPath, file.originalname);
     try {
       // await fs.copyFile(file.path, path.join(folderPath, file.originalname));
@@ -200,19 +230,7 @@ export class StorageService {
       );
     }
   }
-  async getProfileImage(ownerId: string, fileName: string) {
-    const folderPath = path.join(this.storagePath, ownerId, 'profile-images');
-    const filePath = path.join(folderPath, fileName);
-    // if (!(await this.exists(filePath))) {
-    //   throw new NotFoundException(ERROR_MESSAGES.PROFILE_IMAGE_NOT_FOUND);
-    // }
-    const mimeType = mime.contentType(path.extname(filePath));
 
-    return {
-      filePath,
-      mimeType,
-    };
-  }
   async saveThumbnail(image: Buffer, filePath: string) {
     const folderPath = path.join(path.dirname(filePath), '.thumbnail');
     const fileName = path.basename(filePath);
@@ -228,16 +246,6 @@ export class StorageService {
     } catch (error) {
       throw new InternalServerErrorException(
         `Error creating folder: ${folderPath}`,
-      );
-    }
-  }
-
-  async exists(filePath: string): Promise<boolean> {
-    try {
-      return await fs.pathExists(this._fullPath(filePath));
-    } catch (err) {
-      throw new Error(
-        `Error checking if file exists: ${this._fullPath(filePath)}`,
       );
     }
   }

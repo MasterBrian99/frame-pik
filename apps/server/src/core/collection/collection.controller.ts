@@ -10,6 +10,8 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  StreamableFile,
+  Res,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/request/create-collection.dto';
@@ -24,7 +26,9 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
 import GetUserCollectionDto from './dto/request/get-user-collection.do';
-
+import { Response } from 'express';
+import { createReadStream } from 'fs';
+import { Readable } from 'stream';
 @ApiTags('collection')
 @Controller('collection')
 export class CollectionController {
@@ -54,7 +58,7 @@ export class CollectionController {
   @Auth([RoleType.ADMIN, RoleType.USER], {
     public: false,
   })
-  @Get()
+  @Get('current-user')
   async findAllCurrentUser(
     @Query() pagination: GetUserCollectionDto,
     @AuthUser() user: UserEntity,
@@ -69,7 +73,37 @@ export class CollectionController {
       throw e;
     }
   }
-
+  @Auth([RoleType.ADMIN, RoleType.USER], {
+    public: false,
+  })
+  @Get('thumbnail/:id')
+  async getCollectionThumbnail(
+    @Res({ passthrough: true }) res: Response,
+    @AuthUser() user: UserEntity,
+    @Param('id') id: string,
+  ) {
+    try {
+      const data = await this.collectionService.getCollectionThumbnail(
+        user,
+        id,
+      );
+      if (data.filePath === null) {
+        const emptyStream = new Readable({
+          read() {
+            this.push(null); // End the stream
+          },
+        });
+        return new StreamableFile(emptyStream);
+      }
+      res.set({
+        'Content-Type': data.mimeType,
+      });
+      const file = createReadStream(data.filePath);
+      return new StreamableFile(file);
+    } catch (e) {
+      throw e;
+    }
+  }
   @Get()
   findAll() {
     return this.collectionService.findAll();
