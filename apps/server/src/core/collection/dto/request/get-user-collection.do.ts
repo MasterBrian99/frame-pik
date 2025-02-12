@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional } from 'class-validator';
-import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
-import { COLLECTION_ROLE } from 'src/utils/constants';
+import { PageOptionsDto } from '../../../../common/pagination/page-options.dto';
+import { COLLECTION_ROLE } from '../../../../utils/constants';
 
 export default class GetUserCollectionDto extends PageOptionsDto {
   @ApiPropertyOptional({

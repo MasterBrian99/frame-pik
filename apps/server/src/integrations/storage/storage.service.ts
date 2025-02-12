@@ -9,7 +9,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { TypedEventEmitter } from '../event-emitter/typed-event-emitter.class';
 import * as mime from 'mime-types';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
 @Injectable()
 export class StorageService {
   private readonly storagePath: string;

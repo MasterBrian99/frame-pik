@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSnapDto } from './dto/create-snap.dto';
 import { UpdateSnapDto } from './dto/update-snap.dto';
-import { AlbumEntity } from 'src/integrations/database/entity/album.entity';
+import { AlbumEntity } from '../../integrations/database/entity/album.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StorageService } from 'src/integrations/storage/storage.service';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
-import { CollectionEntity } from 'src/integrations/database/entity/collection.entity';
-import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { COLLECTION_ROLE } from 'src/utils/constants';
-import { TypedEventEmitter } from 'src/integrations/event-emitter/typed-event-emitter.class';
+import { StorageService } from '../../integrations/storage/storage.service';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
+import { CollectionEntity } from '../../integrations/database/entity/collection.entity';
+import { CollectionUserEntity } from '../../integrations/database/entity/collection-user.entity';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { COLLECTION_ROLE } from '../../utils/constants';
+import { TypedEventEmitter } from '../../integrations/event-emitter/typed-event-emitter.class';
 
 @Injectable()
 export class SnapService {

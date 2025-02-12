@@ -1,4 +1,4 @@
-import { CollectionEntity } from 'src/integrations/database/entity/collection.entity';
+import { CollectionEntity } from '../../../../integrations/database/entity/collection.entity';
 
 export default class CollectionListResponseDto {
   collections: CollectionEntity[];

@@ -7,14 +7,14 @@ import {
 } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
+import { CollectionUserEntity } from '../../integrations/database/entity/collection-user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { COLLECTION_ROLE } from 'src/utils/constants';
-import { StorageService } from 'src/integrations/storage/storage.service';
-import { AlbumEntity } from 'src/integrations/database/entity/album.entity';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { COLLECTION_ROLE } from '../../utils/constants';
+import { StorageService } from '../../integrations/storage/storage.service';
+import { AlbumEntity } from '../../integrations/database/entity/album.entity';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
 
 @Injectable()
 export class AlbumService {

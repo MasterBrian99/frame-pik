@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Order, STATUS } from 'src/utils/constants';
+import { Order, STATUS } from '../../utils/constants';
 
 export class PageOptionsDto {
   @ApiPropertyOptional({ enum: Order, default: Order.ASC })

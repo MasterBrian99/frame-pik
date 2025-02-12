@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 import { CollectionEntity } from './collection.entity';
-import { COLLECTION_ROLE } from 'src/utils/constants';
+import { COLLECTION_ROLE } from '../../../utils/constants';
 
 @Entity({ name: 'collection_user' })
 export class CollectionUserEntity extends BaseEntity {

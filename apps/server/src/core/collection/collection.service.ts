@@ -8,17 +8,17 @@ import {
 import { CreateCollectionDto } from './dto/request/create-collection.dto';
 import { UpdateCollectionDto } from './dto/request/update-collection.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CollectionEntity } from 'src/integrations/database/entity/collection.entity';
+import { CollectionEntity } from '../../integrations/database/entity/collection.entity';
 import { Repository } from 'typeorm';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
 import { Transactional } from 'typeorm-transactional';
-import { StorageService } from 'src/integrations/storage/storage.service';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { CollectionUserEntity } from 'src/integrations/database/entity/collection-user.entity';
-import { COLLECTION_ROLE } from 'src/utils/constants';
+import { StorageService } from '../../integrations/storage/storage.service';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { CollectionUserEntity } from '../../integrations/database/entity/collection-user.entity';
+import { COLLECTION_ROLE } from '../../utils/constants';
 import GetUserCollectionDto from './dto/request/get-user-collection.do';
-import { PageMetaDto } from 'src/common/pagination/page-meta.dto';
-import { PageDto } from 'src/common/pagination/page.dto';
+import { PageMetaDto } from '../../common/pagination/page-meta.dto';
+import { PageDto } from '../../common/pagination/page.dto';
 import CollectionListResponseDto from './dto/response/collection-list-response.dto';
 
 @Injectable()
@@ -68,9 +68,7 @@ export class CollectionService {
       collection.name = createCollectionDto.name;
       collection.folderName = createCollectionDto.folderName;
       if (file) {
-        collection.path = file.originalname;
-      } else {
-        collection.path = '';
+        collection.thumbnailPath = file.originalname;
       }
       collection.description = createCollectionDto.description;
       const savedCollection =
