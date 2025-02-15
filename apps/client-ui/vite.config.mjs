@@ -10,6 +10,6 @@ export default defineConfig({
     setupFiles: './vitest.setup.mjs',
   },
   build: {
-    outDir: '../client-build',
+    outDir: '../server/dist/client-build',
   },
 });

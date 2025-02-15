@@ -3,3 +3,4 @@
 /apps/client-build
 /apps/server/node_modules
 /apps/client-ui/node_modules
+Dockerfile
