@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "workspaces": [
-    "apps/*"
+    "apps/sever",
+    "apps/client-ui"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

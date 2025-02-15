@@ -1,5 +1,5 @@
 {
-  "name": "mantine-vite-template",
+  "name": "client-ui",
   "private": true,
   "type": "module",
   "version": "0.0.0",
@@ -69,6 +69,5 @@
     "vite": "^6.0.7",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.2"
-  },
-  "packageManager": "yarn@4.6.0"
+  }
 }
