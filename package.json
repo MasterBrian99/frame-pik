@@ -1,0 +1,25 @@
+{
+  "name": "frame-pik",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client:build": "cd apps/client-ui && npm run build",
+    "server:build": "cd apps/server && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasterBrian99/frame-pik.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MasterBrian99/frame-pik/issues"
+  },
+  "homepage": "https://github.com/MasterBrian99/frame-pik#readme"
+}
