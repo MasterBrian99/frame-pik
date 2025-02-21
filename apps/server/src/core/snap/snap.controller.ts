@@ -15,12 +15,12 @@ import { CreateSnapDto } from './dto/create-snap.dto';
 import { UpdateSnapDto } from './dto/update-snap.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
-import { StandardResponse } from 'src/utils/standard-response';
-import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
-import { Auth } from 'src/common/decorators/auth/http.decorators';
-import { RoleType } from 'src/utils/constants';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
+import { StandardResponse } from '../../utils/standard-response';
+import { SUCCESS_MESSAGES } from '../../utils/success-messages';
+import { Auth } from '../../common/decorators/auth/http.decorators';
+import { RoleType } from '../../utils/constants';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { AuthUser } from '../../common/decorators/auth/auth-user.decorator';
 @Controller('snap')
 export class SnapController {
   constructor(private readonly snapService: SnapService) {}

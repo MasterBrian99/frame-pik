@@ -14,7 +14,7 @@ export class StorageModule implements OnModuleInit {
   constructor(@Inject(ConfigService) private configService: ConfigService) {}
   onModuleInit() {
     const folderPath = path.resolve(
-      this.configService.get<string>('STORAGE_PATH', './frame-pik-storage2'),
+      this.configService.get<string>('STORAGE_PATH'),
     );
 
     if (!fs.existsSync(folderPath)) {

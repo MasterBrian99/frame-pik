@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany, Collection } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { RoleType } from 'src/utils/constants';
+import { RoleType } from '../../../utils/constants';
 import { CollectionUserEntity } from './collection-user.entity';
 
 @Entity({ name: 'users' })

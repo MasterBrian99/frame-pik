@@ -3,15 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import {
   ApiBody,
   ApiConflictResponse,
@@ -20,15 +16,15 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
-import { StandardResponse } from 'src/utils/standard-response';
-import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
+import { StandardResponse } from '../../utils/standard-response';
+import { SUCCESS_MESSAGES } from '../../utils/success-messages';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TokenPayloadDto } from './dto/token-payload.dto';
-import { RoleType } from 'src/utils/constants';
-import { Auth } from 'src/common/decorators/auth/http.decorators';
-import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
+import { RoleType } from '../../utils/constants';
+import { Auth } from '../../common/decorators/auth/http.decorators';
+import { AuthUser } from '../../common/decorators/auth/auth-user.decorator';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
 
 @Controller('auth')
 export class AuthController {

@@ -10,16 +10,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthUser } from 'src/common/decorators/auth/auth-user.decorator';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { StandardResponse } from 'src/utils/standard-response';
-import { SUCCESS_MESSAGES } from 'src/utils/success-messages';
+import { AuthUser } from '../../common/decorators/auth/auth-user.decorator';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { StandardResponse } from '../../utils/standard-response';
+import { SUCCESS_MESSAGES } from '../../utils/success-messages';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileInterceptor as CustomFileInterceptor } from '../../common/interceptors/file.interceptor';
-import { Auth } from 'src/common/decorators/auth/http.decorators';
-import { RoleType } from 'src/utils/constants';
+import { Auth } from '../../common/decorators/auth/http.decorators';
+import { RoleType } from '../../utils/constants';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
+import { Readable } from 'stream';
 
 @Controller('user')
 export class UserController {
@@ -50,6 +51,15 @@ export class UserController {
   ) {
     try {
       const data = await this.userService.getProfileImage(user);
+
+      if (data.filePath === null) {
+        const emptyStream = new Readable({
+          read() {
+            this.push(null); // End the stream
+          },
+        });
+        return new StreamableFile(emptyStream);
+      }
       res.set({
         'Content-Type': data.mimeType,
       });

@@ -2,17 +2,12 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
-import { StorageService } from 'src/integrations/storage/storage.service';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
+import { StorageService } from '../../integrations/storage/storage.service';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import * as mime from 'mime-types';
-import * as path from 'path';
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
@@ -42,7 +37,15 @@ export class UserService {
     }
   }
   async getProfileImage(user: UserEntity) {
+    console.log(user);
+
     try {
+      if (user.profileImage === null) {
+        return {
+          filePath: null,
+          mimeType: null,
+        };
+      }
       const filePath = await this.storageService.getProfileImage(
         user.code,
         user.profileImage,

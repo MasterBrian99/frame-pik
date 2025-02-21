@@ -11,7 +11,7 @@ async function bootstrap() {
     cors: true,
     bodyParser: true,
   });
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix('api');
   if (process.env.ENABLE_DOCUMENTATION == '1') {
     setupSwagger(app);

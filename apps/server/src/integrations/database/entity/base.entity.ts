@@ -1,5 +1,5 @@
-import { ContextProvider } from 'src/integrations/providers/context.provider';
-import { STATUS } from 'src/utils/constants';
+import { ContextProvider } from '../../../integrations/providers/context.provider';
+import { STATUS } from '../../../utils/constants';
 import {
   BeforeInsert,
   BeforeUpdate,

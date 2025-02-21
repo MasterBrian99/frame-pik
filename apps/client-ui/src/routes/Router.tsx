@@ -8,6 +8,7 @@ import {
 import LoginPage from '@/app/auth/login-page';
 import MainLayout from '@/app/main/layout/main-layout';
 import ProfileLayout from '@/app/main/pages/profile/layout/profile-layout';
+import CollectionItemPage from '@/app/main/pages/profile/pages/collection-item-page/collection-item-page';
 import CollectionPage from '@/app/main/pages/profile/pages/collection-page/collection-page';
 import SnapPage from '@/app/main/pages/profile/pages/snap-page';
 import { useAuth } from '@/provider/auth-provider';
@@ -75,6 +76,10 @@ const routesForAuthenticatedOnly: RouteObject[] = [
               {
                 path: 'collections',
                 element: <CollectionPage />,
+              },
+              {
+                path: 'collections/:id',
+                element: <CollectionItemPage />,
               },
             ],
           },

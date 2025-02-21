@@ -17,9 +17,14 @@ import { SnapModule } from './core/snap/snap.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThumbnailGenerateModule } from './integrations/thumbnail-generate/thumbnail-generate.module';
 import { TypedEventEmitterModule } from './integrations/event-emitter/typed-event-emitter.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client-build'),
+    }),
     ConfigModule.forRoot({
       load: [databaseConfig],
       isGlobal: true,

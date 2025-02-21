@@ -1,3 +1,4 @@
+import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { z } from 'zod';
 import {
@@ -13,6 +14,8 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useCollectionCreate } from '@/services/hooks/use-collection';
 import customNotification from '@/shared/notifications';
+import { CollectionListResponseType } from '@/types/api/collection';
+import { CommonResponsePaginationType, CommonResponseType } from '@/types/api/common';
 
 const schema = z.object({
   name: z
@@ -67,7 +70,17 @@ const schema = z.object({
       { message: 'Only JPG, JPEG, and PNG files are allowed.' }
     ),
 });
-const CollectionUpload = () => {
+
+interface Props {
+  collectionList: UseInfiniteQueryResult<
+    InfiniteData<
+      CommonResponseType<CommonResponsePaginationType<CollectionListResponseType>>,
+      unknown
+    >,
+    Error
+  >;
+}
+const CollectionUpload = ({ collectionList }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const createCollection = useCollectionCreate();
   const form = useForm<z.infer<typeof schema>>({
@@ -79,7 +92,6 @@ const CollectionUpload = () => {
 
     validate: zodResolver(schema),
   });
-
   form.watch('name', ({ value }) => {
     let sanitizedName = value.replace(/\s+/g, '_'); // Replace spaces with underscores
     sanitizedName = sanitizedName.replace(/[^a-zA-Z0-9_\-\\.]/g, ''); // Remove invalid chars
@@ -101,6 +113,7 @@ const CollectionUpload = () => {
           title: 'Success',
           message: data.message,
         });
+        await collectionList.refetch();
       },
     });
   }

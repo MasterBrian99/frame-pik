@@ -7,18 +7,18 @@ import {
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { UserEntity } from 'src/integrations/database/entity/user.entity';
+import { UserEntity } from '../../integrations/database/entity/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { ERROR_MESSAGES } from '../../utils/error-messages';
 import { PasswordService } from './password.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TokenPayloadDto } from './dto/token-payload.dto';
-import { TokenType } from 'src/utils/constants';
+import { TokenType } from '../../utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
-import { StorageService } from 'src/integrations/storage/storage.service';
+import { StorageService } from '../../integrations/storage/storage.service';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -47,7 +47,7 @@ export class AuthService {
       const userID = crypto.randomUUID();
       user.code = userID;
       await this.userRepository.save(user);
-      await this.storageService.createUserFolders(userID);
+      await this.storageService.initializeUserStorage(userID);
       return;
     } catch (error) {
       this.logger.error(error);
