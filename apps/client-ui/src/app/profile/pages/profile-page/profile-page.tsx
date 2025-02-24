@@ -11,7 +11,7 @@ const ProfilePage = () => {
           radius="md"
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
         />
-       
+
         <Box className={classes.profileContainer}>
           <Avatar
             src="/default-profile.jpg"

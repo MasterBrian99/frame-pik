@@ -62,8 +62,10 @@ const Layout = () => {
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Profile">
-              <ActionIcon variant="transparent" aria-label="Profile"
-              onClick={() => navigate('/profile')}
+              <ActionIcon
+                variant="transparent"
+                aria-label="Profile"
+                onClick={() => navigate('/profile')}
               >
                 <User2 />
               </ActionIcon>

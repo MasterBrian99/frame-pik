@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classes from './layout.module.scss';
-import { Home,LibraryBig,Album,Image,Settings2 ,UserRoundPen} from 'lucide-react';
-import {  Outlet, useNavigate } from 'react-router-dom';
+import { Album, Home, Image, LibraryBig, Settings2, UserRoundPen } from 'lucide-react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Anchor, AppShell, Box, Burger, Flex, Group, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
@@ -46,24 +46,22 @@ const Layout = () => {
       padding="md"
     >
       <AppShell.Header>
-      <Group h="100%" px="md">
+        <Group h="100%" px="md">
           <Flex justify="space-between" align="center" w="100%">
-           <Box>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Box>
+              <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
 
-           <Text>ads</Text>
-           </Box>
-            
+              <Text>ads</Text>
+            </Box>
+
             <Group>
               <ColorSchemeToggle />
             </Group>
           </Flex>
         </Group>
-       
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <div className={classes.navbarMain}>{links}</div>
-        
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
