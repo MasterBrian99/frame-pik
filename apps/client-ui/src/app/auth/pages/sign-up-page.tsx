@@ -1,29 +1,26 @@
 import React from 'react';
-import { Anchor, Box, Button, Group, PasswordInput, Text, TextInput, Title } from '@mantine/core';
+import { Anchor, Box, Button, PasswordInput, Text, TextInput, Title } from '@mantine/core';
+import { Link } from 'react-router-dom';
 
 const SignUpPage = () => {
   return (
     <Box>
       <Box>
         <Title ta="center" fz="h1">
-          Welcome back!
+         Frame Pik
         </Title>
         <Text size="sm" ta="center" mt={5}>
-          Do not have an account yet?{' '}
-          <Anchor size="sm" component="button">
-            Create account
+          Already have an account? {" "}
+          <Anchor size="sm" component={Link} to="/auth/login">
+            Login
           </Anchor>
         </Text>
       </Box>
       <TextInput label="Email" placeholder="you@mantine.dev" required />
+      <TextInput label="Username" placeholder="brian" required  mt="md" /> 
       <PasswordInput label="Password" placeholder="Your password" required mt="md" />
-      <Group justify="space-between" mt="lg">
-        <Anchor component="button" size="sm">
-          Forgot password?
-        </Anchor>
-      </Group>
       <Button fullWidth mt="xl">
-        Sign in
+        Sign up
       </Button>
     </Box>
   );
