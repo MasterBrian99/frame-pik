@@ -68,7 +68,7 @@ export class SnapService {
     }
 
     const filePath = await this.storageService.createNewSnap(
-      collectionOwner.user.code,
+      collectionOwner.user.username,
       album.collection.folderName,
       album.folderName,
       file,

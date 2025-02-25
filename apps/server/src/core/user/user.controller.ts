@@ -21,6 +21,7 @@ import { RoleType } from '../../utils/constants';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
+import { join } from 'path';
 
 @Controller('user')
 export class UserController {
@@ -53,12 +54,8 @@ export class UserController {
       const data = await this.userService.getProfileImage(user);
 
       if (data.filePath === null) {
-        const emptyStream = new Readable({
-          read() {
-            this.push(null); // End the stream
-          },
-        });
-        return new StreamableFile(emptyStream);
+        const file = createReadStream(join(process.cwd(), 'assets/default-profile.jpg'));
+        return new StreamableFile(file);
       }
       res.set({
         'Content-Type': data.mimeType,

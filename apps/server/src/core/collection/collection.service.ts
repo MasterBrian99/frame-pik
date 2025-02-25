@@ -61,7 +61,7 @@ export class CollectionService {
     try {
       await this.storageService.createUserCollectionFolder(
         createCollectionDto.folderName,
-        currentUser.code,
+        currentUser.username,
         file,
       );
       const collection = new CollectionEntity();
@@ -161,7 +161,7 @@ export class CollectionService {
       throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
     }
     const thumbnail = await this.storageService.getCollectionThumbnail(
-      user.code,
+      user.username,
       collection.folderName,
       collection.thumbnailPath,
     );

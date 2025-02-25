@@ -24,7 +24,7 @@ export class UserService {
   async addProfileImage(file: Express.Multer.File, user: UserEntity) {
     this.logger.log(user);
     try {
-      await this.storageService.createNewProfileImage(user.code, file);
+      await this.storageService.createNewProfileImage(user.username, file);
       await this.userRepository.update(user.id, {
         profileImage: file.originalname,
       });
@@ -47,7 +47,7 @@ export class UserService {
         };
       }
       const filePath = await this.storageService.getProfileImage(
-        user.code,
+        user.username,
         user.profileImage,
       );
 

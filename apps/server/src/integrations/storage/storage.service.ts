@@ -25,24 +25,24 @@ export class StorageService {
     this.thumbnailRoot = '_thumbnails';
   }
 
-  async initializeUserStorage(userId: string): Promise<void> {
+  async initializeUserStorage(username: string): Promise<void> {
     await Promise.all([
-      this.createUserRootFolder(userId),
-      this.createCollectionsFolder(userId),
-      this.createProfileImagesFolder(userId),
+      this.createUserRootFolder(username),
+      this.createCollectionsFolder(username),
+      this.createProfileImagesFolder(username),
     ]);
   }
-  async createUserRootFolder(userId: string): Promise<void> {
-    await this.ensureDirectory(path.join(this.storagePath, userId));
+  async createUserRootFolder(username: string): Promise<void> {
+    await this.ensureDirectory(path.join(this.storagePath, username));
   }
-  async createCollectionsFolder(userId: string): Promise<void> {
+  async createCollectionsFolder(username: string): Promise<void> {
     await this.ensureDirectory(
-      path.join(this.storagePath, userId, this.collectionsRoot),
+      path.join(this.storagePath, username, this.collectionsRoot),
     );
   }
-  async createProfileImagesFolder(userId: string): Promise<void> {
+  async createProfileImagesFolder(username: string): Promise<void> {
     await this.ensureDirectory(
-      path.join(this.storagePath, userId, this.profileImageRoot),
+      path.join(this.storagePath, username, this.profileImageRoot),
     );
   }
 
@@ -71,10 +71,10 @@ export class StorageService {
       );
     }
   }
-  async getProfileImage(ownerId: string, fileName: string) {
+  async getProfileImage(username: string, fileName: string) {
     const folderPath = path.join(
       this.storagePath,
-      ownerId,
+      username,
       this.profileImageRoot,
     );
     const filePath = path.join(folderPath, fileName);
@@ -92,13 +92,13 @@ export class StorageService {
     };
   }
   async getCollectionThumbnail(
-    ownerId: string,
+    username: string,
     collectionPath: string,
     thumbnailPath: string,
   ) {
     const folderPath = path.join(
       this.storagePath,
-      ownerId,
+      username,
       this.collectionsRoot,
       collectionPath,
       this.thumbnailRoot,
@@ -133,13 +133,13 @@ export class StorageService {
 
   async createUserCollectionFolder(
     folderName: string,
-    userId: string,
+    username: string,
     file?: Express.Multer.File,
   ): Promise<void> {
     const folderPath = path.join(
       this.storagePath,
-      userId,
-      'collections',
+      username,
+      this.collectionsRoot,
       folderName,
     );
     const thumbnailFolder = path.join(folderPath, '_thumbnails');
@@ -161,14 +161,14 @@ export class StorageService {
     }
   }
   async createFolderAlbum(
-    ownerId: string,
+    username: string,
     collectionPath: string,
     albumPath: string,
   ) {
     const folderPath = path.join(
       this.storagePath,
-      ownerId,
-      'collections',
+      username,
+      this.collectionsRoot,
       collectionPath,
       albumPath,
     );
@@ -182,15 +182,15 @@ export class StorageService {
     }
   }
   async createNewSnap(
-    ownerId: string,
+    username: string,
     collectionPath: string,
     albumPath: string,
     file: Express.Multer.File,
   ) {
     const folderPath = path.join(
       this.storagePath,
-      ownerId,
-      'collections',
+      username,
+     this.collectionsRoot,
       collectionPath,
       albumPath,
     );
@@ -211,10 +211,10 @@ export class StorageService {
       );
     }
   }
-  async createNewProfileImage(ownerId: string, file: Express.Multer.File) {
+  async createNewProfileImage(username: string, file: Express.Multer.File) {
     const folderPath = path.join(
       this.storagePath,
-      ownerId,
+      username,
       this.profileImageRoot,
     );
     const filePath = path.join(folderPath, file.originalname);

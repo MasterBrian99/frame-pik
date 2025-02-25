@@ -32,7 +32,10 @@ export class AuthService {
   ) {}
   async register(createAuthDto: CreateAuthDto) {
     const alreadyExist = await this.userRepository.findOne({
-      where: { email: createAuthDto.email },
+      where: [
+        { email: createAuthDto.email},
+        { username: createAuthDto.username}
+      ],
     });
     if (alreadyExist) {
       throw new ConflictException(ERROR_MESSAGES.USER_ALREADY_EXIST);
@@ -44,10 +47,9 @@ export class AuthService {
       user.password = await this.passwordService.hashPassword(
         createAuthDto.password,
       );
-      const userID = crypto.randomUUID();
-      user.code = userID;
+      user.username =createAuthDto.username;
       await this.userRepository.save(user);
-      await this.storageService.initializeUserStorage(userID);
+      await this.storageService.initializeUserStorage(createAuthDto.username);
       return;
     } catch (error) {
       this.logger.error(error);
