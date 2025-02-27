@@ -1,5 +1,6 @@
 import classes from './collection-card.module.scss';
 import { Eye, ImageIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -35,43 +36,42 @@ const CollectionCard = ({
   const { imageToken } = useAuth();
 
   const theme = useMantineTheme();
-
+  const navigate = useNavigate();
   const backgroundImage = thumbnailAvaliable
-    ? `${import.meta.env.VITE_BASE_URL}/cdn/collection-thumbnail/${thumbnailPath || ''}?token=${imageToken}&format=THUMBNAIL`
+    ? `${import.meta.env.VITE_BASE_URL}/cdn/collection-image/${thumbnailPath || ''}?token=${imageToken}&format=THUMBNAIL`
     : `/default-collection-card.jpg`;
   return (
     // `
-    <Card key={id} shadow="sm" padding="lg" radius="md" withBorder className={classes.card}>
-      <Image
-        src={backgroundImage}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-        }}
-        fit="cover"
-      />
+    <Card
+      key={id}
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      className={classes.card}
+      onClick={() => navigate(`/profile/collection/${id}`)}
+    >
+      <Image src={backgroundImage} className={classes.cardImage} fit="cover" />
       <Overlay className={classes.overlay} opacity={0.55} zIndex={0} />
       <Card.Section className={classes.content}>
         <Flex justify="center" h="100%" direction="column" pos="relative">
-          <Text size="xl" fw="bold" truncate="end">
+          <Text size="xl" fw="bold" truncate="end" className={classes.cardTextCommon}>
             {name}
           </Text>
-          <Text size="sm" mt="md" lineClamp={3}>
+          <Text size="sm" mt="md" lineClamp={3} className={classes.cardTextCommon}>
             {description}
           </Text>
           <Box className={classes.cardItems}>
             <Group gap="lg">
               <Center>
                 <Eye size={18} color={theme.colors.dark[2]} />
-                <Text size="sm" ml="3">
+                <Text size="sm" ml="3" className={classes.cardTextCommon}>
                   {views}
                 </Text>
               </Center>
               <Center>
                 <ImageIcon size={16} color={theme.colors.dark[2]} />
-                <Text size="sm" ml="3">
+                <Text size="sm" ml="3" className={classes.cardTextCommon}>
                   {albumCount}
                 </Text>
               </Center>

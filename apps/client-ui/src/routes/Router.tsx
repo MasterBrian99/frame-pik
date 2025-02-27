@@ -13,6 +13,9 @@ const ProfilePage = React.lazy(() => import('@/app/profile/pages/profile-page/pr
 const ProfileCollectionPage = React.lazy(
   () => import('@/app/profile/pages/collection-page/collection-page')
 );
+const CollectionAlbumPage = React.lazy(
+  () => import('@/app/profile/pages/collection-album-page/collection-album-page')
+);
 const publicRoutes = [
   {
     path: '/auth',
@@ -66,6 +69,18 @@ const routesForAuthenticatedOnly: RouteObject[] = [
             loader: async () => {
               startProgress();
               await Promise.all([import('@/app/profile/pages/collection-page/collection-page')]);
+              endProgress();
+              return null;
+            },
+          },
+          {
+            path: 'collection/:collectionId',
+            element: <CollectionAlbumPage />,
+            loader: async () => {
+              startProgress();
+              await Promise.all([
+                import('@/app/profile/pages/collection-album-page/collection-album-page'),
+              ]);
               endProgress();
               return null;
             },

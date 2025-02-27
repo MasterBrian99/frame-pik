@@ -1,4 +1,8 @@
-import { CollectionListResponseType } from '@/types/collection';
+import {
+  CollectionListResponseType,
+  CollectionRequestUpdateType,
+  CollectionResponseType,
+} from '@/types/collection';
 import { CommonResponsePaginationType, CommonResponseType } from '@/types/common';
 import axios from '@/utils/axios';
 
@@ -38,9 +42,12 @@ export async function getCurrentUserCollection({
   >;
 }
 
-export async function getCollectionThumbnail(id: string) {
-  const res = await axios.get(`collection/thumbnail/${id}`, {
-    responseType: 'blob',
-  });
-  return res.data;
+export async function getCollectionByIdCurrentUser(id: string) {
+  const res = await axios.get(`collection/current-user/${id}`);
+  return res.data as unknown as CommonResponseType<CollectionResponseType>;
+}
+
+export async function updateCollection(data: CollectionRequestUpdateType) {
+  const res = await axios.put('collection', data);
+  return res.data as unknown as CommonResponseType;
 }

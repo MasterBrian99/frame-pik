@@ -5,12 +5,13 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { CollectionListResponseType } from '@/types/collection';
+import { CollectionListResponseType, CollectionResponseType } from '@/types/collection';
 import { CommonResponsePaginationType, CommonResponseType } from '@/types/common';
 import {
   createCollection,
-  getCollectionThumbnail,
+  getCollectionByIdCurrentUser,
   getCurrentUserCollection,
+  updateCollection,
 } from '../api/collection';
 
 export function useCollectionCreate() {
@@ -62,15 +63,19 @@ export function useCollectionCurrentUser(
   });
 }
 
-export function useCollectionThumbnail(
+export function useCollectionByIdCurrentUser(
   id: string,
-  options?: Omit<UseQueryOptions<Blob, Error>, 'queryKey'>
+  options?: UseQueryOptions<CommonResponseType<CollectionResponseType>, Error>
 ) {
   return useQuery({
-    queryKey: ['collection', 'thumbnail', id],
-    queryFn: () => getCollectionThumbnail(id),
+    queryKey: ['collection', 'current-user', id],
+    queryFn: () => getCollectionByIdCurrentUser(id),
     ...options,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+  });
+}
+
+export function useCollectionUpdate() {
+  return useMutation({
+    mutationFn: updateCollection,
   });
 }

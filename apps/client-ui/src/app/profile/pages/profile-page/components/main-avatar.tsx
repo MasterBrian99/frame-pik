@@ -2,9 +2,12 @@ import React from 'react';
 import classes from './main-avatar.module.scss';
 import { Camera } from 'lucide-react';
 import { ActionIcon, Avatar, Box, FileButton, LoadingOverlay } from '@mantine/core';
+import { useAuth } from '@/provider/auth-provider';
 import { useUploadProfileImage, useUserProfile } from '@/services/hooks/use-user';
 
 const MainAvatar = () => {
+  const { imageToken } = useAuth();
+
   const profileImage = useUserProfile();
   const uploadProfileImage = useUploadProfileImage();
   function handleUpload(file: File | null) {
@@ -18,11 +21,13 @@ const MainAvatar = () => {
       });
     }
   }
-
+  const backgroundImage = profileImage.data?.data
+    ? `${import.meta.env.VITE_BASE_URL}/cdn/profile-image/${profileImage.data?.data || ''}?token=${imageToken}&format=ORIGINAL`
+    : `/default-collection-card.jpg`;
   return (
     <Box className={classes.container}>
       <Avatar
-        src={profileImage.isSuccess ? URL.createObjectURL(profileImage.data) : ''}
+        src={profileImage.isSuccess ? backgroundImage : ''}
         alt="it's me"
         className={classes.image}
       />

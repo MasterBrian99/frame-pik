@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SearchIcon } from 'lucide-react';
 import { Box, Center, Grid, Loader, Skeleton, TextInput } from '@mantine/core';
 import { useDebouncedValue, useInViewport } from '@mantine/hooks';
-import CollectionCard from '@/components/collection-card/collection-card';
+import CollectionCard from '@/app/profile/pages/collection-page/components/collection-card/collection-card';
 import useQueryParams from '@/hooks/use-query-params';
 import { useCollectionCurrentUser } from '@/services/hooks/use-collection';
 import CollectionUpload from './components/collection-upload/collection-upload';
