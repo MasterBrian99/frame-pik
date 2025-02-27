@@ -15,6 +15,7 @@ export class StorageService {
   private readonly storagePath: string;
   private readonly collectionsRoot: string;
   private readonly profileImageRoot: string;
+  private readonly collectionThumbnailRoot: string;
   private readonly thumbnailRoot: string;
   private readonly logger = new Logger(StorageService.name);
 
@@ -23,6 +24,7 @@ export class StorageService {
     this.collectionsRoot = 'collections';
     this.profileImageRoot = 'profile-images';
     this.thumbnailRoot = '_thumbnails';
+    this.collectionThumbnailRoot = 'collection_thumbnails';
   }
 
   async initializeUserStorage(username: string): Promise<void> {
@@ -30,6 +32,7 @@ export class StorageService {
       this.createUserRootFolder(username),
       this.createCollectionsFolder(username),
       this.createProfileImagesFolder(username),
+      this.createCollectionThumbnailsFolder(username),
     ]);
   }
   async createUserRootFolder(username: string): Promise<void> {
@@ -43,6 +46,11 @@ export class StorageService {
   async createProfileImagesFolder(username: string): Promise<void> {
     await this.ensureDirectory(
       path.join(this.storagePath, username, this.profileImageRoot),
+    );
+  }
+  async createCollectionThumbnailsFolder(username: string) {
+    await this.ensureDirectory(
+      path.join(this.storagePath, username, this.collectionThumbnailRoot),
     );
   }
 
@@ -91,31 +99,22 @@ export class StorageService {
       mimeType,
     };
   }
-  async getCollectionThumbnail(
-    username: string,
-    collectionPath: string,
-    thumbnailPath: string,
-  ) {
+  async getCollectionThumbnail(username: string, thumbnailPath: string) {
     const folderPath = path.join(
       this.storagePath,
       username,
-      this.collectionsRoot,
-      collectionPath,
-      this.thumbnailRoot,
+      this.collectionThumbnailRoot,
     );
     const filePath = path.join(folderPath, thumbnailPath);
     if (!fs.pathExistsSync(filePath)) {
-      return {
-        filePath: null,
-        mimeType: null,
-      };
+      const defaultImage = path.join(
+        process.cwd(),
+        'src/assets/default-cover.png',
+      );
+      return defaultImage;
     }
-    const mimeType = mime.contentType(path.extname(filePath));
 
-    return {
-      filePath,
-      mimeType,
-    };
+    return filePath;
   }
 
   private async validateFileExists(filePath: string): Promise<void> {
@@ -134,6 +133,7 @@ export class StorageService {
   async createUserCollectionFolder(
     folderName: string,
     username: string,
+    newFileName: string,
     file?: Express.Multer.File,
   ): Promise<void> {
     const folderPath = path.join(
@@ -142,13 +142,17 @@ export class StorageService {
       this.collectionsRoot,
       folderName,
     );
-    const thumbnailFolder = path.join(folderPath, '_thumbnails');
+    // const thumbnailFolder = path.join(folderPath, '_thumbnails');
     try {
       await fs.ensureDir(folderPath);
-      await fs.ensureDir(thumbnailFolder);
       this.logger.log(`Folder created: ${folderPath}`);
       if (file) {
-        const imgePath = path.join(thumbnailFolder, file.originalname);
+        const imgePath = path.join(
+          this.storagePath,
+          username,
+          this.collectionThumbnailRoot,
+          newFileName,
+        );
         await this.writeFile({
           path: imgePath,
           buffer: file.buffer,
@@ -190,7 +194,7 @@ export class StorageService {
     const folderPath = path.join(
       this.storagePath,
       username,
-     this.collectionsRoot,
+      this.collectionsRoot,
       collectionPath,
       albumPath,
     );

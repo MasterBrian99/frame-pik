@@ -25,6 +25,9 @@ export class UserEntity extends BaseEntity {
   @Column({ name: 'username', nullable: false, type: 'varchar', unique: true })
   username: string;
 
+  @Column({ name: 'token', nullable: false, type: 'text' })
+  token: string;
+
   @Column({ name: 'profile_image', nullable: true, type: 'text' })
   profileImage: string;
   @OneToMany(() => CollectionUserEntity, (cu) => cu.user)

@@ -73,37 +73,37 @@ export class CollectionController {
       throw e;
     }
   }
-  @Auth([RoleType.ADMIN, RoleType.USER], {
-    public: false,
-  })
-  @Get('thumbnail/:id')
-  async getCollectionThumbnail(
-    @Res({ passthrough: true }) res: Response,
-    @AuthUser() user: UserEntity,
-    @Param('id') id: string,
-  ) {
-    try {
-      const data = await this.collectionService.getCollectionThumbnail(
-        user,
-        id,
-      );
-      if (data.filePath === null) {
-        const emptyStream = new Readable({
-          read() {
-            this.push(null); // End the stream
-          },
-        });
-        return new StreamableFile(emptyStream);
-      }
-      res.set({
-        'Content-Type': data.mimeType,
-      });
-      const file = createReadStream(data.filePath);
-      return new StreamableFile(file);
-    } catch (e) {
-      throw e;
-    }
-  }
+  // @Auth([RoleType.ADMIN, RoleType.USER], {
+  //   public: false,
+  // })
+  // @Get('thumbnail/:id')
+  // async getCollectionThumbnail(
+  //   @Res({ passthrough: true }) res: Response,
+  //   @AuthUser() user: UserEntity,
+  //   @Param('id') id: string,
+  // ) {
+  //   try {
+  //     const data = await this.collectionService.getCollectionThumbnail(
+  //       user,
+  //       id,
+  //     );
+  //     if (data.filePath === null) {
+  //       const emptyStream = new Readable({
+  //         read() {
+  //           this.push(null); // End the stream
+  //         },
+  //       });
+  //       return new StreamableFile(emptyStream);
+  //     }
+  //     res.set({
+  //       'Content-Type': data.mimeType,
+  //     });
+  //     const file = createReadStream(data.filePath);
+  //     return new StreamableFile(file);
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
   @Get()
   findAll() {
     return this.collectionService.findAll();

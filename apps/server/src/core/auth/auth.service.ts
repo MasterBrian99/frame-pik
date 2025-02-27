@@ -33,8 +33,8 @@ export class AuthService {
   async register(createAuthDto: CreateAuthDto) {
     const alreadyExist = await this.userRepository.findOne({
       where: [
-        { email: createAuthDto.email},
-        { username: createAuthDto.username}
+        { email: createAuthDto.email },
+        { username: createAuthDto.username },
       ],
     });
     if (alreadyExist) {
@@ -47,7 +47,8 @@ export class AuthService {
       user.password = await this.passwordService.hashPassword(
         createAuthDto.password,
       );
-      user.username =createAuthDto.username;
+      user.token = crypto.randomBytes(39).toString('hex');
+      user.username = createAuthDto.username;
       await this.userRepository.save(user);
       await this.storageService.initializeUserStorage(createAuthDto.username);
       return;
@@ -60,10 +61,18 @@ export class AuthService {
   }
   async userLogin(body: LoginAuthDto) {
     const user = await this.validateUser(body);
-    return this.createAccessToken({ role: user.role, userId: user.id });
+    return this.createAccessToken({
+      role: user.role,
+      userId: user.id,
+      token: user.token,
+    });
     // throw new Error('Method not implemented.');
   }
-  async createAccessToken(data: { role: string; userId: number }) {
+  async createAccessToken(data: {
+    role: string;
+    userId: number;
+    token: string;
+  }) {
     return new TokenPayloadDto({
       expiresIn: this.configService.get<string>('JWT_EXPIRATION_TIME'),
       accessToken: await this.jwtService.signAsync({
@@ -72,6 +81,7 @@ export class AuthService {
         role: data.role,
       }),
       userId: data.userId,
+      token: data.token,
     });
   }
   async validateUser(userLoginDto: LoginAuthDto): Promise<UserEntity> {

@@ -19,6 +19,7 @@ import { ThumbnailGenerateModule } from './integrations/thumbnail-generate/thumb
 import { TypedEventEmitterModule } from './integrations/event-emitter/typed-event-emitter.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CdnModule } from './core/cdn/cdn.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { join } from 'path';
     AlbumModule,
     SnapModule,
     ThumbnailGenerateModule,
+    CdnModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

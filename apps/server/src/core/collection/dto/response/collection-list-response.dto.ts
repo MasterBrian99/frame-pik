@@ -15,6 +15,7 @@ export default class CollectionListResponseDto {
         albumCount: c.albumCount,
         views: c.views,
         thumbnailAvaliable: c.thumbnailPath !== null,
+        thumbnailPath: c.thumbnailPath,
       };
     });
   }

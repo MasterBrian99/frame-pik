@@ -20,7 +20,8 @@ import GetUserCollectionDto from './dto/request/get-user-collection.do';
 import { PageMetaDto } from '../../common/pagination/page-meta.dto';
 import { PageDto } from '../../common/pagination/page.dto';
 import CollectionListResponseDto from './dto/response/collection-list-response.dto';
-
+import {randomUUID} from 'crypto'
+import * as path from 'path';
 @Injectable()
 export class CollectionService {
   private readonly logger = new Logger(CollectionService.name);
@@ -59,17 +60,21 @@ export class CollectionService {
       );
     }
     try {
+      let newFileName=""
+      const collection = new CollectionEntity();
+      if (file) {
+       newFileName = randomUUID() + path.extname(file.originalname);
+        collection.thumbnailPath = newFileName;
+      }
       await this.storageService.createUserCollectionFolder(
         createCollectionDto.folderName,
         currentUser.username,
+        newFileName,
         file,
       );
-      const collection = new CollectionEntity();
       collection.name = createCollectionDto.name;
       collection.folderName = createCollectionDto.folderName;
-      if (file) {
-        collection.thumbnailPath = file.originalname;
-      }
+     
       collection.description = createCollectionDto.description;
       const savedCollection =
         await this.collectionEntityRepository.save(collection);
@@ -140,37 +145,37 @@ export class CollectionService {
       pageMetaDto,
     );
   }
-  async getCollectionThumbnail(user: UserEntity, id: string) {
-    const collection = await this.collectionEntityRepository.findOne({
-      where: { id: Number(id) },
-    });
-    if (!collection) {
-      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
-    }
-    const collectionUser = await this.collectionUserEntityRepository.findOne({
-      where: {
-        user: {
-          id: user.id,
-        },
-        collection: {
-          id: collection.id,
-        },
-      },
-    });
-    if (!collectionUser) {
-      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
-    }
-    const thumbnail = await this.storageService.getCollectionThumbnail(
-      user.username,
-      collection.folderName,
-      collection.thumbnailPath,
-    );
+  // async getCollectionThumbnail(user: UserEntity, id: string) {
+  //   const collection = await this.collectionEntityRepository.findOne({
+  //     where: { id: Number(id) },
+  //   });
+  //   if (!collection) {
+  //     throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+  //   }
+  //   const collectionUser = await this.collectionUserEntityRepository.findOne({
+  //     where: {
+  //       user: {
+  //         id: user.id,
+  //       },
+  //       collection: {
+  //         id: collection.id,
+  //       },
+  //     },
+  //   });
+  //   if (!collectionUser) {
+  //     throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+  //   }
+  //   const thumbnail = await this.storageService.getCollectionThumbnail(
+  //     user.username,
+  //     collection.folderName,
+  //     collection.thumbnailPath,
+  //   );
 
-    return {
-      filePath: thumbnail.filePath,
-      mimeType: thumbnail.mimeType,
-    };
-  }
+  //   return {
+  //     filePath: thumbnail.filePath,
+  //     mimeType: thumbnail.mimeType,
+  //   };
+  // }
   findAll() {
     return `This action returns all collection`;
   }
