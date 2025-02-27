@@ -24,7 +24,7 @@ const schema = z.object({
   }),
 });
 const LoginPage = () => {
-  const { setToken } = useAuth();
+  const { setToken, setImageToken } = useAuth();
   const navigate = useNavigate();
   const loginUser = useLoginUser();
   const form = useForm<z.infer<typeof schema>>({
@@ -46,6 +46,7 @@ const LoginPage = () => {
         onSuccess: async (data) => {
           if (data && data.data) {
             setToken(data.data.accessToken);
+            setImageToken(data.data.token);
             flushSync(() =>
               navigate('/profile', {
                 replace: true,

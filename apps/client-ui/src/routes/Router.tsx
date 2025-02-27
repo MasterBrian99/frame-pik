@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom';
 import { useAuth } from '@/provider/auth-provider';
+import { endProgress, startProgress } from '@/shared/progress';
 import { ProtectedRoute } from './protected-route';
 
 const MainLayout = React.lazy(() => import('@/app/main/layout/layout'));
@@ -41,14 +42,33 @@ const routesForAuthenticatedOnly: RouteObject[] = [
       {
         path: '/profile',
         element: <ProfileLayout />,
+        loader: async () => {
+          startProgress();
+          await Promise.all([import('@/app/profile/layout/layout')]);
+          endProgress();
+          return null;
+        },
+
         children: [
           {
             path: '',
             element: <ProfilePage />,
+            loader: async () => {
+              startProgress();
+              await Promise.all([import('@/app/profile/pages/profile-page/profile-page')]);
+              endProgress();
+              return null;
+            },
           },
           {
             path: 'collection',
             element: <ProfileCollectionPage />,
+            loader: async () => {
+              startProgress();
+              await Promise.all([import('@/app/profile/pages/collection-page/collection-page')]);
+              endProgress();
+              return null;
+            },
           },
         ],
       },

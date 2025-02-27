@@ -14,9 +14,11 @@ export async function createCollection(data: FormData) {
 export async function getCurrentUserCollection({
   pageParam = 1,
   searchValue,
+  count,
 }: {
   pageParam: number;
   searchValue: string;
+  count: number;
 }): Promise<CommonResponseType<CommonResponsePaginationType<CollectionListResponseType>>> {
   const urlParams = new URLSearchParams();
   if (pageParam) {
@@ -24,6 +26,9 @@ export async function getCurrentUserCollection({
   }
   if (searchValue && searchValue.length > 0) {
     urlParams.append('search', searchValue);
+  }
+  if (count) {
+    urlParams.append('count', String(count));
   }
 
   urlParams.append('order', 'DESC');

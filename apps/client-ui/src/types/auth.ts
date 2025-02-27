@@ -12,4 +12,5 @@ export type LoginRequestType = {
 export type LoginResponseType = {
   expiresIn: string;
   accessToken: string;
+  token: string;
 };

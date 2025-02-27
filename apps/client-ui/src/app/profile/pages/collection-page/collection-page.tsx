@@ -1,14 +1,24 @@
-import { SearchIcon } from 'lucide-react';
-import { Box, Button, Center, Grid, Loader, TextInput } from '@mantine/core';
-import CollectionCard from '@/components/collection-card/collection-card';
-import { useCollectionCurrentUser } from '@/services/hooks/use-collection';
 import React, { useEffect, useState } from 'react';
+import { SearchIcon } from 'lucide-react';
+import { Box, Center, Grid, Loader, Skeleton, TextInput } from '@mantine/core';
 import { useDebouncedValue, useInViewport } from '@mantine/hooks';
+import CollectionCard from '@/components/collection-card/collection-card';
+import useQueryParams from '@/hooks/use-query-params';
+import { useCollectionCurrentUser } from '@/services/hooks/use-collection';
+import CollectionUpload from './components/collection-upload/collection-upload';
+
 const CollectionPage = () => {
-  const [searchValue, setSearchValue] = useState('');
+  const { getQueryParamByKey, setQueryParam } = useQueryParams();
+  // const searchValue = getQueryParamByKey('search') || '';
+
+  const [searchValue, setSearchValue] = useState(getQueryParamByKey('search') || '');
   const [debounced] = useDebouncedValue(searchValue, 400);
+  useEffect(() => {
+    setQueryParam('search', debounced);
+  }, [debounced]);
+
   const { ref, inViewport } = useInViewport();
-  const collectionList = useCollectionCurrentUser(debounced);
+  const collectionList = useCollectionCurrentUser(debounced, 20);
   useEffect(() => {
     if (inViewport) {
       collectionList.fetchNextPage();
@@ -19,20 +29,39 @@ const CollectionPage = () => {
     <Box>
       <Grid my="md" justify="space-between">
         <Grid.Col span={10}>
-          <TextInput leftSection={<SearchIcon size={19} />} radius="xl"
-           value={searchValue}
-           onChange={(event) => setSearchValue(event.currentTarget.value)}
+          <TextInput
+            leftSection={<SearchIcon size={19} />}
+            radius="xl"
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.currentTarget.value)}
+            name="search"
           />
         </Grid.Col>
         <Grid.Col span={2}>
-          <Button fullWidth radius="xl">
-            Create Collection
-          </Button>
+          <CollectionUpload collectionList={collectionList} />
         </Grid.Col>
       </Grid>
 
       <Grid>
-      {collectionList &&
+        {collectionList.isLoading && (
+          <>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <Grid.Col
+                key={i}
+                span={{
+                  xs: 6,
+                  sm: 6,
+                  md: 6,
+                  lg: 4,
+                  xl: 3,
+                }}
+              >
+                <Skeleton height={200} mb="xl" radius="md" />
+              </Grid.Col>
+            ))}
+          </>
+        )}
+        {collectionList &&
           collectionList.data &&
           collectionList.data.pages.length > 0 &&
           collectionList.data.pages.map((item, i) => (
@@ -58,34 +87,32 @@ const CollectionPage = () => {
                       thumbnailAvaliable={coll.thumbnailAvaliable}
                       views={coll.views}
                       albumCount={coll.albumCount}
+                      thumbnailPath={coll.thumbnailPath}
                     />
                   </Grid.Col>
                 ))}
             </React.Fragment>
           ))}
-
-        <Grid.Col
-          span={{
-            xs: 6,
-            sm: 6,
-            md: 6,
-            lg: 4,
-            xl: 3,
-          }}
-        >
-          <CollectionCard
-            id={1}
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum est repellendus molestias amet quia praesentium rerum sequi natus dicta aut, animi dolores, ipsum eos. Necessitatibus minus inventore a repudiandae officiis."
-            name="name"
-            thumbnailAvaliable={false}
-            views={200}
-            albumCount={11}
-          />
-        </Grid.Col>
+        {collectionList.isFetchingNextPage &&
+          Array.from({ length: 3 }).map((_, i) => (
+            <Grid.Col
+              key={i}
+              span={{
+                xs: 6,
+                sm: 6,
+                md: 6,
+                lg: 4,
+                xl: 3,
+              }}
+            >
+              <Skeleton height={200} mb="xl" radius="md" />
+            </Grid.Col>
+          ))}
       </Grid>
+
       <Center my="xl" ref={ref}>
-      {collectionList.isFetchingNextPage && <Loader />}
-    </Center>
+        {collectionList.isFetchingNextPage && <Loader />}
+      </Center>
     </Box>
   );
 };

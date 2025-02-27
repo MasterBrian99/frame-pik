@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
-// import { useCollectionThumbnail } from '@/services/hooks/use-collection';
-// import defaultCover from '/default-collection-card.jpg';
 import classes from './collection-card.module.scss';
-import { Eye, Image } from 'lucide-react';
+import { Eye, ImageIcon } from 'lucide-react';
 import {
-  Box, Card,
+  Box,
+  Card,
   Center,
   Flex,
-  Group, Overlay,
-  Text, useMantineTheme
+  Group,
+  Image,
+  Overlay,
+  Text,
+  useMantineTheme,
 } from '@mantine/core';
-import { useCollectionThumbnail } from '@/services/hooks/use-collection';
+import { useAuth } from '@/provider/auth-provider';
+
 // import defaultCover from '/default-collection-card.jpg';
 interface Props {
   id: number;
@@ -19,6 +21,7 @@ interface Props {
   views: number;
   thumbnailAvaliable: boolean;
   albumCount: number;
+  thumbnailPath: string | null;
 }
 const CollectionCard = ({
   description,
@@ -27,42 +30,28 @@ const CollectionCard = ({
   views,
   albumCount,
   id,
+  thumbnailPath,
 }: Props) => {
+  const { imageToken } = useAuth();
+
   const theme = useMantineTheme();
-    const thumbnail = useCollectionThumbnail(String(id), {
-      enabled: thumbnailAvaliable && !!id,
-    });
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-    useEffect(() => {
-      if (!thumbnailAvaliable) {
-        setImageUrl(`url(/default-collection-card.jpg)`);
-        return;
-      }
-      if (thumbnailAvaliable) {
-        if (thumbnail.isSuccess && thumbnail.data) {
-          const newImageUrl = URL.createObjectURL(thumbnail.data);
-          setImageUrl(newImageUrl);
-
-          // Clean up the old URL when the data changes or component unmounts
-          return () => {
-            if (imageUrl) {
-              URL.revokeObjectURL(imageUrl);
-            }
-          };
-        }
-      }
-    }, [thumbnail.isSuccess, thumbnail.data, thumbnailAvaliable]);
-    const backgroundImage = imageUrl ? `url(${imageUrl})` : `url(/default-collection-card.jpg)`;
-  // const backgroundImage = `url(/default-collection-card.jpg)`;
-
+  const backgroundImage = thumbnailAvaliable
+    ? `${import.meta.env.VITE_BASE_URL}/cdn/collection-thumbnail/${thumbnailPath || ''}?token=${imageToken}&format=THUMBNAIL`
+    : `/default-collection-card.jpg`;
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder className={classes.card}
-    style={{
-      // backgroundImage: `${thumbnail.isSuccess && thumbnailAvaliable ? `url(${URL.createObjectURL(thumbnail.data)})` : ''}`,
-      backgroundImage: `${backgroundImage}`,
-    }}
-    >
+    // `
+    <Card key={id} shadow="sm" padding="lg" radius="md" withBorder className={classes.card}>
+      <Image
+        src={backgroundImage}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+        }}
+        fit="cover"
+      />
       <Overlay className={classes.overlay} opacity={0.55} zIndex={0} />
       <Card.Section className={classes.content}>
         <Flex justify="center" h="100%" direction="column" pos="relative">
@@ -81,7 +70,7 @@ const CollectionCard = ({
                 </Text>
               </Center>
               <Center>
-                <Image size={16} color={theme.colors.dark[2]} />
+                <ImageIcon size={16} color={theme.colors.dark[2]} />
                 <Text size="sm" ml="3">
                   {albumCount}
                 </Text>
