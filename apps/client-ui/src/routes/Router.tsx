@@ -1,33 +1,34 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  RouteObject,
-  RouterProvider,
-} from 'react-router-dom';
-import LoginPage from '@/app/auth/login-page';
-import MainLayout from '@/app/main/layout/main-layout';
-import ProfileLayout from '@/app/main/pages/profile/layout/profile-layout';
-import CollectionItemPage from '@/app/main/pages/profile/pages/collection-item-page/collection-item-page';
-import CollectionPage from '@/app/main/pages/profile/pages/collection-page/collection-page';
-import SnapPage from '@/app/main/pages/profile/pages/snap-page';
+import React from 'react';
+import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom';
 import { useAuth } from '@/provider/auth-provider';
 import { endProgress, startProgress } from '@/shared/progress';
 import { ProtectedRoute } from './protected-route';
 
+const MainLayout = React.lazy(() => import('@/app/main/layout/layout'));
+const ProfileLayout = React.lazy(() => import('@/app/profile/layout/layout'));
+const AuthLayout = React.lazy(() => import('@/app/auth/layout/layout'));
+const LoginPage = React.lazy(() => import('@/app/auth/pages/login-page'));
+const SignUpPage = React.lazy(() => import('@/app/auth/pages/sign-up-page'));
+const ProfilePage = React.lazy(() => import('@/app/profile/pages/profile-page/profile-page'));
+const ProfileCollectionPage = React.lazy(
+  () => import('@/app/profile/pages/collection-page/collection-page')
+);
+const CollectionAlbumPage = React.lazy(
+  () => import('@/app/profile/pages/collection-album-page/collection-album-page')
+);
 const publicRoutes = [
   {
     path: '/auth',
-    element: <Outlet />,
+    element: <AuthLayout />,
     children: [
       {
         path: 'login',
         element: <LoginPage />,
       },
-      // {
-      //   path: 'register',
-      //   element: <SignUpPage />,
-      // },
+      {
+        path: 'register',
+        element: <SignUpPage />,
+      },
     ],
   },
 ];
@@ -39,49 +40,50 @@ const routesForAuthenticatedOnly: RouteObject[] = [
       {
         path: '/',
         element: <MainLayout />,
+        children: [],
+      },
+      {
+        path: '/profile',
+        element: <ProfileLayout />,
         loader: async () => {
           startProgress();
-          await Promise.all([import('@/app/main/layout/main-layout')]);
+          await Promise.all([import('@/app/profile/layout/layout')]);
           endProgress();
           return null;
         },
+
         children: [
           {
-            path: '/',
-            element: <Outlet />,
+            path: '',
+            element: <ProfilePage />,
             loader: async () => {
               startProgress();
+              await Promise.all([import('@/app/profile/pages/profile-page/profile-page')]);
               endProgress();
               return null;
             },
           },
           {
-            path: '/profile',
-            element: <ProfileLayout />,
+            path: 'collection',
+            element: <ProfileCollectionPage />,
             loader: async () => {
               startProgress();
-              await Promise.all([import('@/app/main/pages/profile/layout/profile-layout')]);
+              await Promise.all([import('@/app/profile/pages/collection-page/collection-page')]);
               endProgress();
               return null;
             },
-            children: [
-              {
-                path: '',
-                element: <Navigate to="/profile/snaps" replace />,
-              },
-              {
-                path: 'snaps',
-                element: <SnapPage />,
-              },
-              {
-                path: 'collections',
-                element: <CollectionPage />,
-              },
-              {
-                path: 'collections/:id',
-                element: <CollectionItemPage />,
-              },
-            ],
+          },
+          {
+            path: 'collection/:collectionId',
+            element: <CollectionAlbumPage />,
+            loader: async () => {
+              startProgress();
+              await Promise.all([
+                import('@/app/profile/pages/collection-album-page/collection-album-page'),
+              ]);
+              endProgress();
+              return null;
+            },
           },
         ],
       },
@@ -92,20 +94,11 @@ const routesForNotAuthenticatedOnly: RouteObject[] = [];
 
 export function Router() {
   const { token } = useAuth();
-  const router = createBrowserRouter(
-    [
-      ...publicRoutes,
-      ...(!token ? routesForNotAuthenticatedOnly : []),
-      ...routesForAuthenticatedOnly,
-    ]
-    // {
-    //   future: {
-    //     v7_relativeSplatPath: true,
-    //     v7_fetcherPersist: true,
-    //     v7_normalizeFormMethod: true,
-    //   },
-    // }
-  );
+  const router = createBrowserRouter([
+    ...publicRoutes,
+    ...(!token ? routesForNotAuthenticatedOnly : []),
+    ...routesForAuthenticatedOnly,
+  ]);
 
   return <RouterProvider router={router} />;
 }

@@ -76,7 +76,7 @@ export class AlbumService {
     }
     try {
       await this.storageService.createFolderAlbum(
-        collectionOwner.user.code,
+        collectionOwner.user.username,
         collectionOwner.collection.folderName,
         createAlbumDto.folderName,
       );

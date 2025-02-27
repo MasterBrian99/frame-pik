@@ -1,11 +1,9 @@
-import { CommonResponseType } from '@/types/api/common';
+import { CommonResponseType } from '@/types/common';
 import axios from '@/utils/axios';
 
 export async function getUserProfile() {
-  const res = await axios.get('user/profile-image', {
-    responseType: 'blob',
-  });
-  return res.data;
+  const res = await axios.get('user/profile-image');
+  return res.data as unknown as CommonResponseType<string | null>;
 }
 
 export async function updateUserProfile(data: FormData) {

@@ -11,4 +11,5 @@ export const ERROR_MESSAGES = {
   ALBUM_NOT_FOUND: 'Album not found',
   COLLECTION_OWNER_NOT_FOUND: 'Collection owner not found',
   PROFILE_IMAGE_NOT_FOUND: 'Profile image not found',
+  IMAGE_NOT_FOUND: 'Image not found',
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Axios, { AxiosResponse } from 'axios';
 import customNotification from '@/shared/notifications';
 

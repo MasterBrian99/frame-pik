@@ -22,8 +22,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', default: RoleType.USER, length: 20 })
   role!: string;
 
-  @Column({ name: 'code', nullable: false, type: 'text', unique: true })
-  code: string;
+  @Column({ name: 'username', nullable: false, type: 'varchar', unique: true })
+  username: string;
+
+  @Column({ name: 'token', nullable: false, type: 'text' })
+  token: string;
 
   @Column({ name: 'profile_image', nullable: true, type: 'text' })
   profileImage: string;

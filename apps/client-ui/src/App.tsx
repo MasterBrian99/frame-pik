@@ -4,8 +4,8 @@ import '@mantine/nprogress/styles.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { scan } from 'react-scan';
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { NavigationProgress } from '@mantine/nprogress';
 import AuthProvider from './provider/auth-provider';
@@ -18,11 +18,13 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
-        <Notifications />
-        <NavigationProgress />
-        <AuthProvider>
-          <Router />
-        </AuthProvider>
+        <ModalsProvider>
+          <Notifications position="top-right" />
+          <NavigationProgress />
+          <AuthProvider>
+            <Router />
+          </AuthProvider>
+        </ModalsProvider>
       </MantineProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>

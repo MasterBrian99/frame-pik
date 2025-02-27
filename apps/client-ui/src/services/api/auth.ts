@@ -1,5 +1,5 @@
-import { LoginRequestType, LoginResponseType, RegisterRequestType } from '@/types/api/auth';
-import { CommonResponseType } from '@/types/api/common';
+import { LoginRequestType, LoginResponseType, RegisterRequestType } from '@/types/auth';
+import { CommonResponseType } from '@/types/common';
 import axios from '@/utils/axios';
 
 export async function registerUser(data: RegisterRequestType) {

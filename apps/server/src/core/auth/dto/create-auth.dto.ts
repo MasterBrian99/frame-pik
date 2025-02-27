@@ -20,4 +20,11 @@ export class CreateAuthDto {
   })
   @IsOptional()
   name?: string = '';
+
+  @ApiProperty({
+    examples: ['brian'],
+    description: 'username of the user ',
+  })
+  @IsString()
+  username: string;
 }

@@ -5,12 +5,13 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { CollectionListResponseType } from '@/types/api/collection';
-import { CommonResponsePaginationType, CommonResponseType } from '@/types/api/common';
+import { CollectionListResponseType, CollectionResponseType } from '@/types/collection';
+import { CommonResponsePaginationType, CommonResponseType } from '@/types/common';
 import {
   createCollection,
-  getCollectionThumbnail,
+  getCollectionByIdCurrentUser,
   getCurrentUserCollection,
+  updateCollection,
 } from '../api/collection';
 
 export function useCollectionCreate() {
@@ -34,6 +35,8 @@ export function useCollectionCreate() {
 // }
 
 export function useCollectionCurrentUser(
+  searchValue: string,
+  count: number,
   // params: Parameters<typeof getCurrentUserCollection>[0],
   options?: DefinedUseInfiniteQueryResult<
     CommonResponseType<CommonResponsePaginationType<CollectionListResponseType>>,
@@ -41,8 +44,8 @@ export function useCollectionCurrentUser(
   >
 ) {
   return useInfiniteQuery({
-    queryKey: ['collection', 'current-user'],
-    queryFn: ({ pageParam }) => getCurrentUserCollection({ pageParam }),
+    queryKey: ['collection', 'current-user', searchValue, count],
+    queryFn: ({ pageParam }) => getCurrentUserCollection({ pageParam, searchValue, count }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (lastPage.data && lastPage.data.meta && lastPage.data.meta.page) {
@@ -60,15 +63,19 @@ export function useCollectionCurrentUser(
   });
 }
 
-export function useCollectionThumbnail(
+export function useCollectionByIdCurrentUser(
   id: string,
-  options?: Omit<UseQueryOptions<Blob, Error>, 'queryKey'>
+  options?: UseQueryOptions<CommonResponseType<CollectionResponseType>, Error>
 ) {
   return useQuery({
-    queryKey: ['collection', 'thumbnail', id],
-    queryFn: () => getCollectionThumbnail(id),
+    queryKey: ['collection', 'current-user', id],
+    queryFn: () => getCollectionByIdCurrentUser(id),
     ...options,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+  });
+}
+
+export function useCollectionUpdate() {
+  return useMutation({
+    mutationFn: updateCollection,
   });
 }

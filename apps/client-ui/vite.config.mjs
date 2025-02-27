@@ -1,6 +1,7 @@
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from 'node:path';
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
@@ -9,7 +10,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.mjs',
   },
-  build: {
-    outDir: '../client-build',
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+        additionalData: `@use "${path.join(process.cwd(), 'src/_mantine').replace(/\\/g, '/')}" as mantine;`,
+      },
+    },
   },
 });

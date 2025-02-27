@@ -20,7 +20,9 @@ import GetUserCollectionDto from './dto/request/get-user-collection.do';
 import { PageMetaDto } from '../../common/pagination/page-meta.dto';
 import { PageDto } from '../../common/pagination/page.dto';
 import CollectionListResponseDto from './dto/response/collection-list-response.dto';
-
+import { randomUUID } from 'crypto';
+import * as path from 'path';
+import { CollectionItemResponseDto } from './dto/response/collection-item-response.dto';
 @Injectable()
 export class CollectionService {
   private readonly logger = new Logger(CollectionService.name);
@@ -59,17 +61,21 @@ export class CollectionService {
       );
     }
     try {
+      let newFileName = '';
+      const collection = new CollectionEntity();
+      if (file) {
+        newFileName = randomUUID() + path.extname(file.originalname);
+        collection.thumbnailPath = newFileName;
+      }
       await this.storageService.createUserCollectionFolder(
         createCollectionDto.folderName,
-        currentUser.code,
+        currentUser.username,
+        newFileName,
         file,
       );
-      const collection = new CollectionEntity();
       collection.name = createCollectionDto.name;
       collection.folderName = createCollectionDto.folderName;
-      if (file) {
-        collection.thumbnailPath = file.originalname;
-      }
+
       collection.description = createCollectionDto.description;
       const savedCollection =
         await this.collectionEntityRepository.save(collection);
@@ -89,7 +95,6 @@ export class CollectionService {
 
   async findAllCurrentUser(user: UserEntity, pagination: GetUserCollectionDto) {
     pagination.userId = String(user.id);
-
     return await this.findPaginated(pagination);
   }
 
@@ -140,47 +145,61 @@ export class CollectionService {
       pageMetaDto,
     );
   }
-  async getCollectionThumbnail(user: UserEntity, id: string) {
-    const collection = await this.collectionEntityRepository.findOne({
-      where: { id: Number(id) },
-    });
-    if (!collection) {
-      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
-    }
-    const collectionUser = await this.collectionUserEntityRepository.findOne({
-      where: {
-        user: {
-          id: user.id,
-        },
-        collection: {
-          id: collection.id,
-        },
-      },
-    });
-    if (!collectionUser) {
-      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
-    }
-    const thumbnail = await this.storageService.getCollectionThumbnail(
-      user.code,
-      collection.folderName,
-      collection.thumbnailPath,
-    );
 
-    return {
-      filePath: thumbnail.filePath,
-      mimeType: thumbnail.mimeType,
-    };
-  }
   findAll() {
     return `This action returns all collection`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} collection`;
+  async findOneCurrentUser(id: string, user: UserEntity) {
+    const collectionWithUser =
+      await this.collectionUserEntityRepository.findOne({
+        where: {
+          collection: {
+            id: Number(id),
+          },
+          user: {
+            id: user.id,
+          },
+        },
+        relations: ['collection'],
+      });
+    if (!collectionWithUser) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+
+    return new CollectionItemResponseDto(collectionWithUser.collection);
   }
 
-  update(id: number, updateCollectionDto: UpdateCollectionDto) {
-    return `This action updates a #${id} collection`;
+  async update(updateCollectionDto: UpdateCollectionDto, user: UserEntity) {
+    const collectionWithUser =
+      await this.collectionUserEntityRepository.findOne({
+        where: {
+          collection: {
+            id: updateCollectionDto.id,
+          },
+          user: {
+            id: user.id,
+          },
+        },
+        relations: ['collection'],
+      });
+    if (!collectionWithUser) {
+      throw new NotFoundException(ERROR_MESSAGES.COLLECTION_NOT_FOUND);
+    }
+    try {
+      await this.collectionEntityRepository.update(
+        { id: collectionWithUser.collection.id },
+        {
+          name: updateCollectionDto.name,
+          description: updateCollectionDto.description,
+        },
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   remove(id: number) {

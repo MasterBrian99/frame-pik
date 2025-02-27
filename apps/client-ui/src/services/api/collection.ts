@@ -1,5 +1,9 @@
-import { CollectionListResponseType } from '@/types/api/collection';
-import { CommonResponsePaginationType, CommonResponseType } from '@/types/api/common';
+import {
+  CollectionListResponseType,
+  CollectionRequestUpdateType,
+  CollectionResponseType,
+} from '@/types/collection';
+import { CommonResponsePaginationType, CommonResponseType } from '@/types/common';
 import axios from '@/utils/axios';
 
 export async function createCollection(data: FormData) {
@@ -13,12 +17,22 @@ export async function createCollection(data: FormData) {
 
 export async function getCurrentUserCollection({
   pageParam = 1,
+  searchValue,
+  count,
 }: {
   pageParam: number;
+  searchValue: string;
+  count: number;
 }): Promise<CommonResponseType<CommonResponsePaginationType<CollectionListResponseType>>> {
   const urlParams = new URLSearchParams();
   if (pageParam) {
     urlParams.append('page', String(pageParam));
+  }
+  if (searchValue && searchValue.length > 0) {
+    urlParams.append('search', searchValue);
+  }
+  if (count) {
+    urlParams.append('count', String(count));
   }
 
   urlParams.append('order', 'DESC');
@@ -28,9 +42,12 @@ export async function getCurrentUserCollection({
   >;
 }
 
-export async function getCollectionThumbnail(id: string) {
-  const res = await axios.get(`collection/thumbnail/${id}`, {
-    responseType: 'blob',
-  });
-  return res.data;
+export async function getCollectionByIdCurrentUser(id: string) {
+  const res = await axios.get(`collection/current-user/${id}`);
+  return res.data as unknown as CommonResponseType<CollectionResponseType>;
+}
+
+export async function updateCollection(data: CollectionRequestUpdateType) {
+  const res = await axios.put('collection', data);
+  return res.data as unknown as CommonResponseType;
 }
