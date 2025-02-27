@@ -27,14 +27,14 @@ export class CdnController {
     return this.cdnService.create(createCdnDto);
   }
 
-  @Get('collection-thumbnail/:filePath')
-  async getCollectionThumbnail(
+  @Get('collection-image/:filePath')
+  async getCollectionImage(
     @Param('filePath') filePath: string,
     @Query() imageCdnQuery: ImageCdnDto,
     @Res() res: Response,
   ) {
     try {
-      const data = await this.cdnService.getCollectionThumbnail(
+      const data = await this.cdnService.getCollectionImage(
         filePath,
         imageCdnQuery,
         res,
@@ -49,6 +49,27 @@ export class CdnController {
     }
   }
 
+  @Get('profile-image/:filePath')
+  async getProfileImage(
+    @Param('filePath') filePath: string,
+    @Query() imageCdnQuery: ImageCdnDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const data = await this.cdnService.getProfileImage(
+        filePath,
+        imageCdnQuery,
+        res,
+      );
+      return new StandardResponse(
+        HttpStatus.OK,
+        SUCCESS_MESSAGES.SUCCESS,
+        data,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.cdnService.findOne(+id);

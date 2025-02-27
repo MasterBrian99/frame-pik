@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCdnDto } from './dto/create-cdn.dto';
 import { UpdateCdnDto } from './dto/update-cdn.dto';
 import { StorageService } from 'src/integrations/storage/storage.service';
@@ -15,6 +20,32 @@ import { IMAGE_FORMAT_TYPE } from 'src/utils/constants';
 
 @Injectable()
 export class CdnService {
+  async getProfileImage(
+    filePath: string,
+    imageCdnQuery: ImageCdnDto,
+    res: Response,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { token: imageCdnQuery.token },
+    });
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+    if (!filePath) {
+      throw new NotFoundException(ERROR_MESSAGES.IMAGE_NOT_FOUND);
+    }
+    try {
+      const imagePath = await this.storageService.getProfileImage(
+        user.username,
+        filePath,
+      );
+      const image = this.processImage(imagePath, imageCdnQuery.format);
+      this.streamImage(res, image, filePath);
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    }
+  }
   private readonly logger = new Logger(CdnService.name);
 
   constructor(
@@ -23,19 +54,19 @@ export class CdnService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getCollectionThumbnail(
+  async getCollectionImage(
     filePath: string,
     imageCdnQuery: ImageCdnDto,
     res: Response,
   ) {
     if (!filePath) {
-      throw new Error(ERROR_MESSAGES.IMAGE_NOT_FOUND);
+      throw new NotFoundException(ERROR_MESSAGES.IMAGE_NOT_FOUND);
     }
     const user = await this.userRepository.findOne({
       where: { token: imageCdnQuery.token },
     });
     if (!user) {
-      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
     }
     try {
       const thumbnailPath = await this.storageService.getCollectionThumbnail(
@@ -47,7 +78,9 @@ export class CdnService {
       this.streamImage(res, image, filePath);
     } catch (error) {
       this.logger.error(error);
-      throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

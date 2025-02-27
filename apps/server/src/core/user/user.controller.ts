@@ -52,19 +52,11 @@ export class UserController {
   ) {
     try {
       const data = await this.userService.getProfileImage(user);
-
-      if (data.filePath === null) {
-        const file = createReadStream(join(process.cwd(), 'src/assets/default-profile.jpg'));
-        res.set({
-          'Content-Type': 'image/jpg',
-        });
-        return new StreamableFile(file);
-      }
-      res.set({
-        'Content-Type': data.mimeType,
-      });
-      const file = createReadStream(data.filePath);
-      return new StreamableFile(file);
+      return new StandardResponse(
+        HttpStatus.OK,
+        SUCCESS_MESSAGES.SUCCESS,
+        data,
+      );
     } catch (e) {
       throw e;
     }

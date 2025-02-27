@@ -8,6 +8,8 @@ import { UserEntity } from '../../integrations/database/entity/user.entity';
 import { StorageService } from '../../integrations/storage/storage.service';
 import { ERROR_MESSAGES } from '../../utils/error-messages';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
+import * as path from 'path';
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
@@ -23,10 +25,15 @@ export class UserService {
 
   async addProfileImage(file: Express.Multer.File, user: UserEntity) {
     this.logger.log(user);
+    const fileName = randomUUID() + path.extname(file.originalname);
     try {
-      await this.storageService.createNewProfileImage(user.username, file);
+      await this.storageService.createNewProfileImage(
+        user.username,
+        fileName,
+        file,
+      );
       await this.userRepository.update(user.id, {
-        profileImage: file.originalname,
+        profileImage: fileName,
       });
       return;
     } catch (error) {
@@ -37,24 +44,8 @@ export class UserService {
     }
   }
   async getProfileImage(user: UserEntity) {
-    console.log(user);
-
     try {
-      if (user.profileImage === null) {
-        return {
-          filePath: null,
-          mimeType: null,
-        };
-      }
-      const filePath = await this.storageService.getProfileImage(
-        user.username,
-        user.profileImage,
-      );
-
-      return {
-        filePath: filePath.filePath,
-        mimeType: filePath.mimeType,
-      };
+      return user.profileImage;
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(

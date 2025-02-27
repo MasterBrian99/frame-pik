@@ -87,17 +87,14 @@ export class StorageService {
     );
     const filePath = path.join(folderPath, fileName);
     if (!fs.pathExistsSync(filePath)) {
-      return {
-        filePath: null,
-        mimeType: null,
-      };
+      const defaultImage = path.join(
+        process.cwd(),
+        'src/assets/default-profile.jpg',
+      );
+      return defaultImage;
     }
-    const mimeType = mime.contentType(path.extname(filePath));
 
-    return {
-      filePath,
-      mimeType,
-    };
+    return filePath;
   }
   async getCollectionThumbnail(username: string, thumbnailPath: string) {
     const folderPath = path.join(
@@ -215,13 +212,17 @@ export class StorageService {
       );
     }
   }
-  async createNewProfileImage(username: string, file: Express.Multer.File) {
+  async createNewProfileImage(
+    username: string,
+    newFilename: string,
+    file: Express.Multer.File,
+  ) {
     const folderPath = path.join(
       this.storagePath,
       username,
       this.profileImageRoot,
     );
-    const filePath = path.join(folderPath, file.originalname);
+    const filePath = path.join(folderPath, newFilename);
     try {
       // await fs.copyFile(file.path, path.join(folderPath, file.originalname));
       await fs.writeFile(filePath, file.buffer);
